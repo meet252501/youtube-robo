@@ -32,7 +32,7 @@ def generate_hook_variants(transcript: Dict[str, Any], vibe: str) -> List[Dict[s
     if not full_text.strip():
         return get_fallback_hooks()
         
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-2.5-flash')
     
     prompt = f"""
     You are an expert viral short-form video producer. We are creating a video with the following vibe: "{vibe}".
