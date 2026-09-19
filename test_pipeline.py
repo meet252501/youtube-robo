@@ -99,6 +99,20 @@ def main():
     # Copy the reframed video to Remotion's public folder so it can access it
     os.makedirs("remotion/public", exist_ok=True)
     shutil.copy(CLIP_OUTPUT, "remotion/public/test_reframe_only.mp4")
+
+    # 1.5. GENERATE 3D DEPTH MASK (Floor 11)
+    print("\n--- 1.5. Generating Neural Depth Mask for 3D Occlusion ---")
+    MASK_OUTPUT = "output/test_mask.mp4"
+    if not os.path.exists(MASK_OUTPUT):
+        from mask_generator import generate_mask_video
+        success = generate_mask_video(CLIP_OUTPUT, MASK_OUTPUT)
+        if not success:
+            print("Mask generation failed. Falling back to non-3D composition.")
+    else:
+        print(f"Found existing mask {MASK_OUTPUT}, skipping generation...")
+    
+    if os.path.exists(MASK_OUTPUT):
+        shutil.copy(MASK_OUTPUT, "remotion/public/test_mask.mp4")
     
     print("\n--- 3. Multimodal AI Creative Director: Visual Keyframe & Philosophical Transcript Analysis ---")
     from ai_director import analyze_transcript_and_direct
@@ -118,6 +132,7 @@ def main():
 
     props = {
         "videoUrl": "/test_reframe_only.mp4",
+        "maskUrl": "/test_mask.mp4" if os.path.exists(MASK_OUTPUT) else None,
         "durationInFrames": int(frame_count),
         "fps": fps,
         "width": 1080,

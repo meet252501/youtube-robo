@@ -133,6 +133,7 @@ export interface FocusBadgeConfig {
 // --- Main composition props ---
 export interface ShortVideoProps {
   videoUrl: string;
+  maskUrl?: string | null;
   durationInFrames: number;
   fps: number;
   width: number;
@@ -265,8 +266,9 @@ export const focusBadgeConfigSchema = z.object({
   durationMs: z.number().optional(),
 });
 
-export const shortVideoPropsSchema = z.object({
+export const ShortVideoSchema = z.object({
   videoUrl: z.string(),
+  maskUrl: z.string().nullable().optional(),
   durationInFrames: z.number().int().positive(),
   fps: z.number().positive(),
   width: z.number().int().positive(),

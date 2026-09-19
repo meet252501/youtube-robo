@@ -34,7 +34,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
   // Resolve local files for Remotion
   const src = videoUrl.startsWith("http") ? videoUrl : staticFile(videoUrl);
   
-  const { cameraMoves } = rawProps as unknown as ShortVideoProps;
+  const { cameraMoves, maskUrl } = rawProps as unknown as ShortVideoProps;
   
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -97,6 +97,39 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
         </VideoEffects>
       </AbsoluteFill>
 
+      {/* 3D Depth Layer (Mid-Ground): Subtitles and Hook go here if mask is enabled! */}
+      {maskUrl && (
+        <>
+          {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles (Behind Speaker) */}
+          {subtitles && <Subtitles config={subtitles} />}
+          {/* Layer 6: Viral Hook Overlay Headline (Behind Speaker) */}
+          {hook && <HookOverlay config={hook} />}
+        </>
+      )}
+
+      {/* Layer 1.5: Masked Foreground Speaker (Floor 11 3D Occlusion) */}
+      {maskUrl && (
+        <AbsoluteFill>
+          <svg width="100%" height="100%" style={{ position: "absolute", zIndex: 10 }}>
+            <defs>
+              <mask id="luma-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100%" height="100%">
+                <foreignObject width="100%" height="100%">
+                  <OffthreadVideo 
+                    src={staticFile(maskUrl)} 
+                    style={{ width: "100%", height: "100%", objectFit: "cover", transform: `scale(${currentScale})`, transformOrigin: "center center" }} 
+                  />
+                </foreignObject>
+              </mask>
+            </defs>
+            <foreignObject width="100%" height="100%" mask="url(#luma-mask)">
+              <AbsoluteFill style={{ transform: `scale(${currentScale})`, transformOrigin: "center center" }}>
+                <OffthreadVideo src={src} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </AbsoluteFill>
+            </foreignObject>
+          </svg>
+        </AbsoluteFill>
+      )}
+
       {/* Layer 1.5: Cinematic LUT Gradient Overlay */}
       {colorGrading?.enabled && <ColorGradeOverlay config={colorGrading} />}
 
@@ -109,8 +142,8 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
       {/* Layer 3.5: AI B-Roll Context Injection */}
       {brollCutaways && brollCutaways.length > 0 && <BRollOverlay cutaways={brollCutaways} />}
 
-      {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles */}
-      {subtitles && <Subtitles config={subtitles} />}
+      {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles (Standard Foreground if no mask) */}
+      {!maskUrl && subtitles && <Subtitles config={subtitles} />}
 
       {/* Layer 4.5: Floor 7 Dynamic Data Infographics */}
       {dataVisualization && <DataInfographics config={dataVisualization} />}
@@ -118,8 +151,8 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
       {/* Layer 5: Floor 3 Minimalist Focus Topic Badge (optional) */}
       {focusBadge && <FocusBadge config={focusBadge} />}
 
-      {/* Layer 6: Viral Hook Overlay Headline (optional) */}
-      {hook && <HookOverlay config={hook} />}
+      {/* Layer 6: Viral Hook Overlay Headline (Standard Foreground if no mask) */}
+      {!maskUrl && hook && <HookOverlay config={hook} />}
 
       {/* Layer 7: Minimalist Progress Bar */}
       {progressBar && <ProgressBar config={progressBar} />}
