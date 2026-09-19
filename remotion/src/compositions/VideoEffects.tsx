@@ -4,6 +4,7 @@ import type { EffectsConfig, EffectSegment } from "../lib/types";
 
 interface VideoEffectsProps {
   config: EffectsConfig | null;
+  customFilter?: string;
   children: React.ReactNode;
 }
 
@@ -13,12 +14,20 @@ interface VideoEffectsProps {
  */
 export const VideoEffects: React.FC<VideoEffectsProps> = ({
   config,
+  customFilter,
   children,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   if (!config || config.segments.length === 0) {
+    if (customFilter) {
+      return (
+        <div style={{ width: "100%", height: "100%", filter: customFilter }}>
+          {children}
+        </div>
+      );
+    }
     return <>{children}</>;
   }
 
@@ -30,6 +39,7 @@ export const VideoEffects: React.FC<VideoEffectsProps> = ({
   if (brightness !== 1) filterParts.push(`brightness(${brightness})`);
   if (contrast !== 1) filterParts.push(`contrast(${contrast})`);
   if (saturate !== 1) filterParts.push(`saturate(${saturate})`);
+  if (customFilter) filterParts.push(customFilter);
   const filterStr = filterParts.length > 0 ? filterParts.join(" ") : "none";
 
   return (

@@ -8,6 +8,7 @@ import { ProgressBar } from "./ProgressBar";
 import { FilmTexture } from "./FilmTexture";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { FocusBadge } from "./FocusBadge";
+import { HDRBloomDef, ColorGradeOverlay } from "./ColorGrading";
 
 /**
  * Main 15-story composition that layers all professional post-processing
@@ -23,6 +24,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
     filmTexture,
     audioVisualizer,
     focusBadge,
+    colorGrading,
   } = rawProps as unknown as ShortVideoProps;
     
   // Resolve local files for Remotion
@@ -30,13 +32,19 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
   
   return (
     <AbsoluteFill style={{ backgroundColor: "#000" }}>
-      {/* Layer 1: Base video with optional zoom/color effects */}
-      <VideoEffects config={effects}>
+      {/* Optional HDR Bloom SVG Definition */}
+      {colorGrading?.hdrBloom && <HDRBloomDef />}
+
+      {/* Layer 1: Base video with optional zoom/color effects and HDR Bloom filter */}
+      <VideoEffects config={effects} customFilter={colorGrading?.hdrBloom ? "url(#hdr-bloom)" : undefined}>
         <OffthreadVideo
           src={src}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </VideoEffects>
+
+      {/* Layer 1.5: Cinematic LUT Gradient Overlay */}
+      {colorGrading?.enabled && <ColorGradeOverlay config={colorGrading} />}
 
       {/* Layer 2: Tactile Film Texture (Grain & Vignette) */}
       <FilmTexture config={filmTexture} />

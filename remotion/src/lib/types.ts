@@ -71,6 +71,14 @@ export interface EffectsConfig {
   segments: EffectSegment[];
 }
 
+// --- Color Grading & LUT config ---
+export interface ColorGradingConfig {
+  enabled?: boolean;
+  style?: "teal-orange" | "moody-dark" | "vibrant-pop" | "vintage-film" | string;
+  hdrBloom?: boolean;
+  intensity?: number;
+}
+
 // --- Progress Bar config ---
 export interface ProgressBarConfig {
   enabled?: boolean;
@@ -137,6 +145,7 @@ export interface ShortVideoProps {
   filmTexture?: FilmTextureConfig | null;
   audioVisualizer?: AudioVisualizerConfig | null;
   focusBadge?: FocusBadgeConfig | null;
+  colorGrading?: ColorGradingConfig | null;
 }
 
 // --- Zod schemas for validation (used by render service) ---

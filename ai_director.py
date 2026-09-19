@@ -36,6 +36,8 @@ class ArtisticDirection(BaseModel):
     fontSize: int = Field(description="Subtitle font size (66-74px for optimal mobile retention)")
     showTopOverlays: bool = Field(description="Strictly False for studio interviews and videos with native intro disclaimers")
     emphasisWords: List[str] = Field(description="8-15 high-weight conceptual anchor words to emphasize in subtitles")
+    colorGradingStyle: str = Field(description="Cinematic LUT style: 'teal-orange', 'moody-dark', 'vibrant-pop', or 'vintage-film'")
+    hdrBloom: bool = Field(description="True if the video lighting warrants an HDR bloom effect (glowing highlights)")
 
 class AIDirectorPlan(BaseModel):
     visualPerception: VisualPerception
@@ -205,6 +207,8 @@ def analyze_transcript_and_direct(
                  * Colors: Crisp White (#FFFFFF) text with warm Polished Gold (#FFD700) or Volt Yellow (#FFE600) highlights.
                  * Overlays: showTopOverlays MUST BE FALSE. No tacky top banners or floating boxes covering faces or disclaimers.
                  * Placement: Subtitles in lower-third safe zone (below chin, above lower edge).
+               - Color Grading: Choose a style ('teal-orange', 'moody-dark', 'vibrant-pop', 'vintage-film'). 
+                 * Select 'hdrBloom'=true if the scene has high-contrast practical lights or needs a cinematic glow.
             """
             
             contents = keyframes + [prompt] if keyframes else [prompt]
@@ -266,6 +270,12 @@ def analyze_transcript_and_direct(
             "backgroundColor": "rgba(0,0,0,0.30)",
             "glow": True
         },
+        "colorGrading": {
+            "enabled": True,
+            "style": art.colorGradingStyle or "teal-orange",
+            "hdrBloom": art.hdrBloom,
+            "intensity": 0.6 if plan.visualPerception.lightingMood == "low_key_moody" else 0.4
+        },
         "emojis": None,        # Removed: Strictly no cartoon stickers
         "filmTexture": {
             "enabled": True,
@@ -308,7 +318,9 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
-                emphasisWords=["specifics", "live", "age", "body", "younger", "fasting", "food", "life", "years"]
+                emphasisWords=["specifics", "live", "age", "body", "younger", "fasting", "food", "life", "years"],
+                colorGradingStyle="teal-orange",
+                hdrBloom=True
             ),
             directorSummary="Tailored for an intellectual podcast interview: clean typography, warm gold highlights, and zero top-overlay clutter."
         )
