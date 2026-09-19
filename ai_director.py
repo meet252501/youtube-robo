@@ -16,6 +16,12 @@ class DataVisualization(BaseModel):
     chartType: Optional[str] = Field(default="none", description="Type of chart to display: 'counter-gauge', 'data-card', or 'none'.")
     timestampStart: Optional[float] = Field(default=0.0, description="Approximate start time in seconds to show the graphic (e.g., 10.5)")
 
+class CameraMove(BaseModel):
+    timestampStart: float = Field(description="Start time in seconds for the camera move (e.g., 12.5)")
+    duration: float = Field(description="Duration in seconds (e.g., 0.3 for punch-in, 5.0 for Ken Burns slow push)")
+    scaleTarget: float = Field(description="Target scale. 1.0 is default, 1.15 is a typical punch-in, 1.3 is extreme closeup.")
+    easing: str = Field(description="Easing function: 'spring' for snappy punch-ins, 'linear' for slow pushes")
+
 # ==============================================================================
 # FLOOR 3 / 15-STORY ENTERPRISE MULTIMODAL AI CREATIVE DIRECTOR
 # ==============================================================================
@@ -53,6 +59,7 @@ class AIDirectorPlan(BaseModel):
     artisticDirection: ArtisticDirection
     directorSummary: str = Field(description="Executive summary of the creative direction and visual-vibe synergy")
     dataVisualization: DataVisualization
+    cameraMoves: List[CameraMove] = Field(default=[], description="List of dynamic cinematic camera zoom movements triggered by intense moments in the transcript.")
     hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook variants for A/B testing")
 
 # Premium Typography Collections (Google Fonts bundled in Remotion)
@@ -264,6 +271,14 @@ def analyze_transcript_and_direct(
                     "chartType": "counter-gauge",
                     "timestampStart": 0.0
                 }},
+                "cameraMoves": [
+                    {{
+                        "timestampStart": 0.0,
+                        "duration": 0.0,
+                        "scaleTarget": 1.0,
+                        "easing": "string"
+                    }}
+                ],
                 "hookVariants": null
             }}
             """
@@ -347,6 +362,7 @@ def analyze_transcript_and_direct(
             "enabled": False
         },
         "dataVisualization": plan.dataVisualization.dict() if hasattr(plan, "dataVisualization") else None,
+        "cameraMoves": plan.cameraMoves if hasattr(plan, "cameraMoves") else [],
         "emphasisWords": emphasis_words,
         "directorPlan": plan.dict() if hasattr(plan, "dict") else plan
     }
@@ -391,6 +407,7 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 chartType="none",
                 timestampStart=0.0
             ),
+            cameraMoves=[],
             directorSummary="Intellectual conversation about life and biology.",
             hookVariants=None
         )
@@ -419,9 +436,20 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
-                emphasisWords=["money", "business", "market", "revenue", "scale", "lesson"]
+                emphasisWords=["money", "business", "market", "revenue", "scale", "lesson"],
+                colorGradingStyle="teal-orange",
+                hdrBloom=False
             ),
-            directorSummary="High-credibility financial and entrepreneurial layout."
+            dataVisualization=DataVisualization(
+                hasMetrics=False,
+                metricValue="",
+                metricLabel="",
+                chartType="none",
+                timestampStart=0.0
+            ),
+            cameraMoves=[],
+            directorSummary="High-credibility financial and entrepreneurial layout.",
+            hookVariants=None
         )
     else:
         return AIDirectorPlan(
@@ -448,7 +476,18 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
-                emphasisWords=["truth", "secret", "never", "always", "know", "how"]
+                emphasisWords=["truth", "secret", "never", "always", "know", "how"],
+                colorGradingStyle="teal-orange",
+                hdrBloom=False
             ),
-            directorSummary="Clean intellectual dialogue short."
+            dataVisualization=DataVisualization(
+                hasMetrics=False,
+                metricValue="",
+                metricLabel="",
+                chartType="none",
+                timestampStart=0.0
+            ),
+            cameraMoves=[],
+            directorSummary="Clean intellectual dialogue short.",
+            hookVariants=None
         )

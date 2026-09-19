@@ -153,6 +153,14 @@ export interface ShortVideoProps {
     chartType: string;
     timestampStart: number;
   } | null;
+  cameraMoves?: CameraMove[];
+}
+
+export interface CameraMove {
+  timestampStart: number;
+  duration: number;
+  scaleTarget: number;
+  easing: "spring" | "linear";
 }
 
 // --- Zod schemas for validation (used by render service) ---
@@ -271,5 +279,11 @@ export const shortVideoPropsSchema = z.object({
     chartType: z.string(),
     timestampStart: z.number()
   }).nullable().optional(),
+  cameraMoves: z.array(z.object({
+    timestampStart: z.number(),
+    duration: z.number(),
+    scaleTarget: z.number(),
+    easing: z.enum(["spring", "linear"])
+  })).optional(),
 });
 
