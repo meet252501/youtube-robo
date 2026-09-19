@@ -9,6 +9,7 @@ import { FilmTexture } from "./FilmTexture";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { FocusBadge } from "./FocusBadge";
 import { HDRBloomDef, ColorGradeOverlay } from "./ColorGrading";
+import { DataInfographics } from "./DataInfographics";
 
 /**
  * Main 15-story composition that layers all professional post-processing
@@ -25,6 +26,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
     audioVisualizer,
     focusBadge,
     colorGrading,
+    dataVisualization,
   } = rawProps as unknown as ShortVideoProps;
     
   // Resolve local files for Remotion
@@ -54,6 +56,9 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
 
       {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles */}
       {subtitles && <Subtitles config={subtitles} />}
+
+      {/* Layer 4.5: Floor 7 Dynamic Data Infographics */}
+      {dataVisualization && <DataInfographics config={dataVisualization} />}
 
       {/* Layer 5: Floor 3 Minimalist Focus Topic Badge (optional) */}
       {focusBadge && <FocusBadge config={focusBadge} />}

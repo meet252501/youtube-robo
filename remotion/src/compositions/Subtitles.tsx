@@ -28,8 +28,8 @@ interface SubtitlesProps {
 
 const POSITION_MAP: Record<string, React.CSSProperties> = {
   top: { top: "14%", bottom: "auto" },
-  middle: { bottom: "28%", top: "auto" }, // Safe zone: lower-third below the face
-  bottom: { bottom: "28%", top: "auto" },
+  middle: { top: "55%", bottom: "auto" }, // Safe zone: upper-chest center, below the face
+  bottom: { bottom: "15%", top: "auto" }, // Push it lower so it doesn't float awkwardly
 };
 
 export const Subtitles: React.FC<SubtitlesProps> = ({ config }) => {
@@ -102,7 +102,7 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
     activeColor: style.highlightColor,
     pillColor: style.bgColor,
     position: (position === "top" ? "top" : "bottom") as any,
-    edgeOffset: position === "top" ? 0.14 : 0.26, // 26% from bottom = golden lower-chest zone
+    edgeOffset: position === "top" ? 0.14 : (position === "middle" ? 0.45 : 0.15), // Dynamic offset
   };
 
   // 5. Setup Professional Studio Typography Rules & Multi-Color Semantics
@@ -164,10 +164,11 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
   return (
     <AbsoluteFill
       style={{
-        textShadow: "0 2px 4px rgba(0,0,0,0.85), 0 6px 20px rgba(0,0,0,0.95)",
+        textShadow: "0 2px 8px rgba(0,0,0,0.8), 0 8px 24px rgba(0,0,0,0.6)",
         paintOrder: "stroke fill",
         WebkitTextStroke: style.borderWidth > 0 ? `${style.borderWidth}px ${style.borderColor}` : undefined,
-        letterSpacing: "-0.015em",
+        letterSpacing: "-0.02em",
+        lineHeight: 1.05,
       }}
     >
       <CaptionTrack pages={pages}>

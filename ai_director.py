@@ -7,6 +7,14 @@ from PIL import Image
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any, List
+
+class DataVisualization(BaseModel):
+    hasMetrics: bool = Field(description="True if the transcript contains hard numbers, percentages, money, or statistics.")
+    metricValue: Optional[str] = Field(default="", description="The primary number or metric (e.g. '91%', '$1M', '3 hours').")
+    metricLabel: Optional[str] = Field(default="", description="Short description of the metric (e.g. 'Businesses use video', 'Revenue', 'Sleep lost').")
+    chartType: Optional[str] = Field(default="none", description="Type of chart to display: 'counter-gauge', 'data-card', or 'none'.")
+    timestampStart: Optional[float] = Field(default=0.0, description="Approximate start time in seconds to show the graphic (e.g., 10.5)")
 
 # ==============================================================================
 # FLOOR 3 / 15-STORY ENTERPRISE MULTIMODAL AI CREATIVE DIRECTOR
@@ -44,6 +52,7 @@ class AIDirectorPlan(BaseModel):
     conversationalAnalysis: ConversationalAnalysis
     artisticDirection: ArtisticDirection
     directorSummary: str = Field(description="Executive summary of the creative direction and visual-vibe synergy")
+    dataVisualization: DataVisualization
     hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook variants for A/B testing")
 
 # Premium Typography Collections (Google Fonts bundled in Remotion)
@@ -209,6 +218,54 @@ def analyze_transcript_and_direct(
                  * Placement: Subtitles in lower-third safe zone (below chin, above lower edge).
                - Color Grading: Choose a style ('teal-orange', 'moody-dark', 'vibrant-pop', 'vintage-film'). 
                  * Select 'hdrBloom'=true if the scene has high-contrast practical lights or needs a cinematic glow.
+               - NO EMOJIS. Emojis read as amateurish. We strictly use typography, layout, and data visualization.
+
+            D. DATA VISUALIZATION:
+               - Scan the transcript for specific quantitative data (percentages, money, days/hours, sizes).
+               - If found, set hasMetrics=true and extract the primary metricValue and metricLabel.
+               - Choose a chartType: 'counter-gauge' for numbers/percentages climbing, 'data-card' for static statistics.
+               - Estimate the timestampStart based on where the metric is mentioned in the transcript.
+               
+            E. OUTPUT FORMAT:
+            You MUST return a raw JSON object (and ONLY a JSON object) matching exactly this structure:
+            {{
+                "visualPerception": {{
+                    "setting": "string",
+                    "lightingMood": "string",
+                    "subjectsAndEquipment": "string",
+                    "hasNativeIntroOrDisclaimer": true/false,
+                    "safeZoneRecommendation": "string"
+                }},
+                "conversationalAnalysis": {{
+                    "primaryVibe": "string",
+                    "intellectualDepth": "string",
+                    "emotionalTone": "string",
+                    "coreThesis": "string",
+                    "keyDiscussionTopics": ["string", "string"]
+                }},
+                "artisticDirection": {{
+                    "fontFamily": "editorial",
+                    "fontRationale": "string",
+                    "animation": "kinetic-slam",
+                    "primaryTextColor": "#FFFFFF",
+                    "highlightColor": "#FFD700",
+                    "progressBarColor": "#FFD700",
+                    "fontSize": 68,
+                    "showTopOverlays": false,
+                    "emphasisWords": ["word1", "word2"],
+                    "colorGradingStyle": "teal-orange",
+                    "hdrBloom": false
+                }},
+                "directorSummary": "string",
+                "dataVisualization": {{
+                    "hasMetrics": true/false,
+                    "metricValue": "string",
+                    "metricLabel": "string",
+                    "chartType": "counter-gauge",
+                    "timestampStart": 0.0
+                }},
+                "hookVariants": null
+            }}
             """
             
             contents = keyframes + [prompt] if keyframes else [prompt]
@@ -217,11 +274,13 @@ def analyze_transcript_and_direct(
                 model=model_name,
                 contents=contents,
                 config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=AIDirectorPlan
+                    response_mime_type="application/json"
                 )
             )
-            raw_json = json.loads(response.text)
+            raw_text = response.text
+            if raw_text.startswith("```json"):
+                raw_text = raw_text.replace("```json\n", "").replace("```", "").strip()
+            raw_json = json.loads(raw_text)
             plan = AIDirectorPlan(**raw_json)
             
             print(f"[AI DIRECTOR] Multimodal AI Director Analysis Complete:")
@@ -229,6 +288,8 @@ def analyze_transcript_and_direct(
             print(f"   - Visual Setting: '{plan.visualPerception.setting}' ({plan.visualPerception.lightingMood})")
             print(f"   - Native Intro Detected: {plan.visualPerception.hasNativeIntroOrDisclaimer}")
             print(f"   - Typography: '{plan.artisticDirection.fontFamily}' | Animation: '{plan.artisticDirection.animation}'")
+            if plan.dataVisualization.hasMetrics:
+                print(f"   - Data Found: {plan.dataVisualization.metricValue} {plan.dataVisualization.metricLabel} (Type: {plan.dataVisualization.chartType})")
             print(f"   - Core Thesis: \"{plan.conversationalAnalysis.coreThesis}\"")
         except Exception as e:
             print(f"[AI DIRECTOR] Gemini multimodal call error: {e}. Falling back to rule-based director...")
@@ -285,6 +346,7 @@ def analyze_transcript_and_direct(
         "audioVisualizer": {
             "enabled": False
         },
+        "dataVisualization": plan.dataVisualization.dict() if hasattr(plan, "dataVisualization") else None,
         "emphasisWords": emphasis_words,
         "directorPlan": plan.dict() if hasattr(plan, "dict") else plan
     }
@@ -320,9 +382,17 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 showTopOverlays=False,
                 emphasisWords=["specifics", "live", "age", "body", "younger", "fasting", "food", "life", "years"],
                 colorGradingStyle="teal-orange",
-                hdrBloom=True
+                hdrBloom=False
             ),
-            directorSummary="Tailored for an intellectual podcast interview: clean typography, warm gold highlights, and zero top-overlay clutter."
+            dataVisualization=DataVisualization(
+                hasMetrics=False,
+                metricValue="",
+                metricLabel="",
+                chartType="none",
+                timestampStart=0.0
+            ),
+            directorSummary="Intellectual conversation about life and biology.",
+            hookVariants=None
         )
     elif any(k in text_lower for k in ["business", "money", "dollar", "revenue", "founder", "market", "scale"]):
         return AIDirectorPlan(

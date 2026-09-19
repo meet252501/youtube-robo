@@ -37,15 +37,28 @@ def main():
         
     os.makedirs("output", exist_ok=True)
     
+    # 0. MICRO-SILENCE STRIPPER & WPM COMPRESSOR (Floor 6)
+    print("\n--- 0. Micro-Silence Stripper & Adaptive WPM Compressor ---")
+    COMPRESSED_VIDEO = "output/test_compressed.mp4"
+    if not os.path.exists(COMPRESSED_VIDEO):
+        from silence_stripper import strip_silences
+        success = strip_silences(SOURCE_VIDEO, COMPRESSED_VIDEO, speed_multiplier=1.10)
+        if not success:
+            print("Silence Stripper failed.")
+            return
+    else:
+        print(f"Found existing compressed video {COMPRESSED_VIDEO}, skipping...")
+    
     # 1. TRACKING & REFRAMING (Now with Punch-In enabled)
     print("\n--- 1. Testing Face Tracking & Reframing (With Audio Punch-In) ---")
     if not os.path.exists(CLIP_OUTPUT):
-        print(f"Processing {SOURCE_VIDEO}...")
+        # We pass the COMPRESSED video to the tracker!
+        print(f"Processing {COMPRESSED_VIDEO}...")
         start_time = time.time()
         # Using aspect ratio 9:16 (0.5625)
         # force_strategy="TRACK" forces the bounding-box face tracker (YOLOv8/Mediapipe)
         success = render(
-            input_video=SOURCE_VIDEO,
+            input_video=COMPRESSED_VIDEO,
             final_output_video=CLIP_OUTPUT,
             aspect_ratio=9/16,
             force_strategy="TRACK" 

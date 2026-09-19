@@ -88,8 +88,12 @@ model = YOLO(os.environ.get("YOLO_MODEL_PATH", "yolov8n.pt"))
 
 # --- MediaPipe Setup ---
 # Use standard Face Detection (BlazeFace) for speed
-mp_face_detection = mp.solutions.face_detection
-face_detection = mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5)
+try:
+    mp_face_detection = mp.solutions.face_detection
+    face_detection = mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5)
+except AttributeError:
+    mp_face_detection = None
+    face_detection = None
 
 # Consecutive detections a large target move must survive before the camera
 # follows it (see SmoothedCameraman.update_target). Env-overridable so the
@@ -435,10 +439,13 @@ def detect_face_candidates(frame):
     height, width, _ = frame.shape
     small, _scale = _detection_frame(frame)
     rgb_frame = cv2.cvtColor(small, cv2.COLOR_BGR2RGB)
+    candidates = []
+    
+    if not face_detection:
+        return candidates
+        
     with DETECT_LOCK:
         results = face_detection.process(rgb_frame)
-    
-    candidates = []
     
     if not results.detections:
         return []

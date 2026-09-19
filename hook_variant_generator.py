@@ -60,9 +60,8 @@ def generate_hook_variants(transcript: Dict[str, Any], vibe: str) -> List[Dict[s
             )
         )
         
-        result_json = type('obj', (object,), {'json': lambda: response.text})()
         import json
-        data = json.loads(result_json.json())
+        data = json.loads(response.text)
         return data.get('hookVariants', get_fallback_hooks())
         
     except Exception as e:

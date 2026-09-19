@@ -146,6 +146,13 @@ export interface ShortVideoProps {
   audioVisualizer?: AudioVisualizerConfig | null;
   focusBadge?: FocusBadgeConfig | null;
   colorGrading?: ColorGradingConfig | null;
+  dataVisualization?: {
+    hasMetrics: boolean;
+    metricValue: string;
+    metricLabel: string;
+    chartType: string;
+    timestampStart: number;
+  } | null;
 }
 
 // --- Zod schemas for validation (used by render service) ---
@@ -257,5 +264,12 @@ export const shortVideoPropsSchema = z.object({
   filmTexture: filmTextureConfigSchema.nullable().optional(),
   audioVisualizer: audioVisualizerConfigSchema.nullable().optional(),
   focusBadge: focusBadgeConfigSchema.nullable().optional(),
+  dataVisualization: z.object({
+    hasMetrics: z.boolean(),
+    metricValue: z.string(),
+    metricLabel: z.string(),
+    chartType: z.string(),
+    timestampStart: z.number()
+  }).nullable().optional(),
 });
 
