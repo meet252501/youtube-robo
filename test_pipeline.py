@@ -104,6 +104,18 @@ def main():
     from ai_director import analyze_transcript_and_direct
     director_plan = analyze_transcript_and_direct(transcript, video_path=CLIP_OUTPUT, video_title=SOURCE_VIDEO)
     
+    import urllib.parse
+    broll_cutaways = []
+    if director_plan.get("brollCutaways"):
+        for broll in director_plan["brollCutaways"]:
+            prompt_encoded = urllib.parse.quote(broll.get("imagePrompt", "abstract background"))
+            url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=1080&height=1920&nologo=true"
+            broll_cutaways.append({
+                "timestampStart": broll.get("timestampStart", 0.0),
+                "duration": broll.get("duration", 2.0),
+                "url": url
+            })
+
     props = {
         "videoUrl": "/test_reframe_only.mp4",
         "durationInFrames": int(frame_count),
@@ -121,7 +133,8 @@ def main():
         "progressBar": director_plan.get("progressBar"),
         "emojis": None, # Removed: No cartoon stickers
         "filmTexture": director_plan.get("filmTexture"),
-        "audioVisualizer": None
+        "audioVisualizer": None,
+        "brollCutaways": broll_cutaways
     }
     
     from silence_stripper import strip_silences

@@ -10,6 +10,7 @@ import { AudioVisualizer } from "./AudioVisualizer";
 import { FocusBadge } from "./FocusBadge";
 import { HDRBloomDef, ColorGradeOverlay } from "./ColorGrading";
 import { DataInfographics } from "./DataInfographics";
+import { BRollOverlay } from "./BRollOverlay";
 
 /**
  * Main 15-story composition that layers all professional post-processing
@@ -27,6 +28,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
     focusBadge,
     colorGrading,
     dataVisualization,
+    brollCutaways,
   } = rawProps as unknown as ShortVideoProps;
     
   // Resolve local files for Remotion
@@ -103,6 +105,9 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
 
       {/* Layer 3: Audio Visualizer Soundwave */}
       <AudioVisualizer config={audioVisualizer} />
+
+      {/* Layer 3.5: AI B-Roll Context Injection */}
+      {brollCutaways && brollCutaways.length > 0 && <BRollOverlay cutaways={brollCutaways} />}
 
       {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles */}
       {subtitles && <Subtitles config={subtitles} />}

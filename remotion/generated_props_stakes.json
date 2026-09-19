@@ -942,21 +942,17 @@
         "young": "#00F0FF",
         "protocols": "#FFD700",
         "better": "#FFD700",
-        "eat slower": "#FFD700",
-        "running": "#FFD700",
-        "sauna": "#FFD700",
-        "cold": "#FFD700",
         "lifespan": "#FFD700",
         "details": "#FFD700",
         "woman": "#FFD700",
         "man": "#FFD700",
-        "general rules": "#FFD700"
+        "rules": "#FFD700"
       },
       "outlinePx": 0
     }
   },
   "hook": {
-    "text": "Unlock your health: Specifics are crucial.",
+    "text": "This cost them everything.",
     "size": "L",
     "position": "center",
     "style": "classic",
@@ -979,5 +975,17 @@
     "grainOpacity": 0.02,
     "vignetteIntensity": 0.3
   },
-  "audioVisualizer": null
+  "audioVisualizer": null,
+  "brollCutaways": [
+    {
+      "timestampStart": 2.0,
+      "duration": 2.5,
+      "url": "https://image.pollinations.ai/prompt/cinematic%204k%20macro%20shot%20of%20vibrant%20green%20and%20purple%20healthy%20plant%20cells%20under%20a%20microscope%2C%20abstract%2C%20bioluminescent%2C%20scientific.?width=1080&height=1920&nologo=true"
+    },
+    {
+      "timestampStart": 14.0,
+      "duration": 2.5,
+      "url": "https://image.pollinations.ai/prompt/futuristic%20holographic%20display%20showing%20a%20human%20silhouette%20with%20various%20health%20metrics%20and%20bio-indicators%2C%20representing%20longevity%20and%20health%20optimization%2C%20vibrant%20blue%20and%20gold%20colors.?width=1080&height=1920&nologo=true"
+    }
+  ]
 }

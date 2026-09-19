@@ -22,6 +22,11 @@ class CameraMove(BaseModel):
     scaleTarget: float = Field(description="Target scale. 1.0 is default, 1.15 is a typical punch-in, 1.3 is extreme closeup.")
     easing: str = Field(description="Easing function: 'spring' for snappy punch-ins, 'linear' for slow pushes")
 
+class BRollCutaway(BaseModel):
+    timestampStart: float = Field(description="Start time in seconds to overlay the B-Roll (e.g. 15.5)")
+    duration: float = Field(description="Duration of the B-Roll in seconds (e.g. 2.0)")
+    imagePrompt: str = Field(description="A highly descriptive AI image generation prompt for the B-Roll (e.g., 'macro shot of glowing human cells dividing under a microscope, cinematic lighting')")
+
 # ==============================================================================
 # FLOOR 3 / 15-STORY ENTERPRISE MULTIMODAL AI CREATIVE DIRECTOR
 # ==============================================================================
@@ -60,6 +65,7 @@ class AIDirectorPlan(BaseModel):
     directorSummary: str = Field(description="Executive summary of the creative direction and visual-vibe synergy")
     dataVisualization: DataVisualization
     cameraMoves: List[CameraMove] = Field(default=[], description="List of dynamic cinematic camera zoom movements triggered by intense moments in the transcript.")
+    brollCutaways: List[BRollCutaway] = Field(default=[], description="List of AI B-Roll cutaways to inject visual context.")
     hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook variants for A/B testing")
 
 # Premium Typography Collections (Google Fonts bundled in Remotion)
@@ -227,11 +233,10 @@ def analyze_transcript_and_direct(
                  * Select 'hdrBloom'=true if the scene has high-contrast practical lights or needs a cinematic glow.
                - NO EMOJIS. Emojis read as amateurish. We strictly use typography, layout, and data visualization.
 
-            D. DATA VISUALIZATION:
-               - Scan the transcript for specific quantitative data (percentages, money, days/hours, sizes).
-               - If found, set hasMetrics=true and extract the primary metricValue and metricLabel.
-               - Choose a chartType: 'counter-gauge' for numbers/percentages climbing, 'data-card' for static statistics.
-               - Estimate the timestampStart based on where the metric is mentioned in the transcript.
+            D. DATA VISUALIZATION & B-ROLL (FLOORS 7 & 10):
+               - Scan the transcript for specific quantitative data (percentages, money, days/hours, sizes) for `dataVisualization`.
+               - Scan the transcript for highly visual concepts (e.g., "cells", "money", "gym", "universe").
+               - Schedule 1 or 2 `brollCutaways` where an AI image will cover the screen for 2-3 seconds to break up the talking head. The `imagePrompt` MUST be highly descriptive (e.g., "cinematic 4k macro shot of glowing blue cellular biology").
                
             E. OUTPUT FORMAT:
             You MUST return a raw JSON object (and ONLY a JSON object) matching exactly this structure:
@@ -277,6 +282,13 @@ def analyze_transcript_and_direct(
                         "duration": 0.0,
                         "scaleTarget": 1.0,
                         "easing": "string"
+                    }}
+                ],
+                "brollCutaways": [
+                    {{
+                        "timestampStart": 10.5,
+                        "duration": 2.5,
+                        "imagePrompt": "highly detailed cinematic shot of..."
                     }}
                 ],
                 "hookVariants": null
@@ -362,7 +374,8 @@ def analyze_transcript_and_direct(
             "enabled": False
         },
         "dataVisualization": plan.dataVisualization.dict() if hasattr(plan, "dataVisualization") else None,
-        "cameraMoves": plan.cameraMoves if hasattr(plan, "cameraMoves") else [],
+        "cameraMoves": [c.dict() if hasattr(c, "dict") else c for c in getattr(plan, "cameraMoves", [])],
+        "brollCutaways": [b.dict() if hasattr(b, "dict") else b for b in getattr(plan, "brollCutaways", [])],
         "emphasisWords": emphasis_words,
         "directorPlan": plan.dict() if hasattr(plan, "dict") else plan
     }
@@ -408,6 +421,9 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 timestampStart=0.0
             ),
             cameraMoves=[],
+            brollCutaways=[
+                BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic dark moody shot of a glowing dna helix")
+            ],
             directorSummary="Intellectual conversation about life and biology.",
             hookVariants=None
         )
@@ -448,6 +464,9 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 timestampStart=0.0
             ),
             cameraMoves=[],
+            brollCutaways=[
+                BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic 4k shot of a modern skyscraper boardroom at night")
+            ],
             directorSummary="High-credibility financial and entrepreneurial layout.",
             hookVariants=None
         )
@@ -488,6 +507,7 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 timestampStart=0.0
             ),
             cameraMoves=[],
+            brollCutaways=[],
             directorSummary="Clean intellectual dialogue short.",
             hookVariants=None
         )

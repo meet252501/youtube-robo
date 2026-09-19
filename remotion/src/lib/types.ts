@@ -154,6 +154,13 @@ export interface ShortVideoProps {
     timestampStart: number;
   } | null;
   cameraMoves?: CameraMove[];
+  brollCutaways?: BRollCutaway[];
+}
+
+export interface BRollCutaway {
+  timestampStart: number;
+  duration: number;
+  url: string;
 }
 
 export interface CameraMove {
@@ -284,6 +291,11 @@ export const shortVideoPropsSchema = z.object({
     duration: z.number(),
     scaleTarget: z.number(),
     easing: z.enum(["spring", "linear"])
+  })).optional(),
+  brollCutaways: z.array(z.object({
+    timestampStart: z.number(),
+    duration: z.number(),
+    url: z.string().url()
   })).optional(),
 });
 
