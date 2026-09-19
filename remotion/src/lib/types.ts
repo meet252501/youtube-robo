@@ -8,7 +8,7 @@ export interface CaptionWord {
 }
 
 // --- Subtitle config ---
-export type SubtitleAnimation = "none" | "word-highlight" | "pop" | "karaoke";
+export type SubtitleAnimation = "none" | "word-highlight" | "pop" | "karaoke" | "bounce" | "rotate" | "kinetic-slam" | "editorial-emphasis" | "karaoke-fill" | "neon-glow" | "pill-karaoke" | "weight-shift";
 export type SubtitlePosition = "top" | "middle" | "bottom";
 
 export interface SubtitleStyle {
@@ -21,6 +21,10 @@ export interface SubtitleStyle {
   bgColor: string;
   bgOpacity: number;
   animation: SubtitleAnimation;
+  emphasisWords?: string[];
+  semanticColorMap?: Record<string, string>;
+  dimInactiveWords?: boolean;
+  activeWordScale?: number;
 }
 
 export interface SubtitleConfig {
@@ -67,6 +71,57 @@ export interface EffectsConfig {
   segments: EffectSegment[];
 }
 
+// --- Progress Bar config ---
+export interface ProgressBarConfig {
+  enabled?: boolean;
+  position?: "top" | "bottom";
+  height?: number;
+  color?: string;
+  backgroundColor?: string;
+  glow?: boolean;
+}
+
+// --- Emoji Stickers config ---
+export interface EmojiItem {
+  emoji: string;
+  startMs: number;
+  durationMs?: number;
+  position?: "center-left" | "center-right" | "top-right" | "top-left" | "above-captions" | "bottom-center";
+  size?: number;
+}
+
+export interface EmojiConfig {
+  items: EmojiItem[];
+}
+
+// --- Film Texture config ---
+export interface FilmTextureConfig {
+  enabled?: boolean;
+  grainOpacity?: number;
+  vignetteOpacity?: number;
+}
+
+// --- Audio Visualizer config ---
+export interface AudioVisualizerConfig {
+  enabled?: boolean;
+  barCount?: number;
+  color?: string;
+  position?: "bottom-center" | "bottom-left" | "bottom-right";
+  height?: number;
+  width?: number;
+}
+
+// --- Floor 3: Focus Topic Badge config ---
+export interface FocusBadgeConfig {
+  enabled?: boolean;
+  text: string;
+  category?: "insight" | "metric" | "principle" | "alert" | "custom";
+  accentColor?: string;
+  position?: "top-center" | "top-left" | "top-right";
+  startMs?: number;
+  durationMs?: number;
+}
+
 // --- Main composition props ---
 export interface ShortVideoProps {
   videoUrl: string;
@@ -77,6 +132,11 @@ export interface ShortVideoProps {
   subtitles: SubtitleConfig | null;
   hook: HookConfig | null;
   effects: EffectsConfig | null;
+  progressBar?: ProgressBarConfig | null;
+  emojis?: EmojiConfig | null;
+  filmTexture?: FilmTextureConfig | null;
+  audioVisualizer?: AudioVisualizerConfig | null;
+  focusBadge?: FocusBadgeConfig | null;
 }
 
 // --- Zod schemas for validation (used by render service) ---
@@ -95,7 +155,7 @@ export const subtitleStyleSchema = z.object({
   borderWidth: z.number(),
   bgColor: z.string(),
   bgOpacity: z.number().min(0).max(1),
-  animation: z.enum(["none", "word-highlight", "pop", "karaoke"]),
+  animation: z.enum(["none", "word-highlight", "pop", "karaoke", "bounce", "rotate", "kinetic-slam", "editorial-emphasis", "karaoke-fill", "neon-glow", "pill-karaoke", "weight-shift"]),
 });
 
 export const subtitleConfigSchema = z.object({
@@ -110,6 +170,7 @@ export const hookConfigSchema = z.object({
   size: z.enum(["S", "M", "L"]),
   entranceAnimation: z.enum(["spring", "fade", "slide-up", "none"]),
   displayDurationSec: z.number().positive(),
+  style: z.enum(["classic", "dark", "yellow", "red", "outline", "outline_yellow"]).optional(),
 });
 
 export const effectSegmentSchema = z.object({
@@ -127,6 +188,52 @@ export const effectsConfigSchema = z.object({
   segments: z.array(effectSegmentSchema),
 });
 
+export const progressBarConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  position: z.enum(["top", "bottom"]).optional(),
+  height: z.number().optional(),
+  color: z.string().optional(),
+  backgroundColor: z.string().optional(),
+  glow: z.boolean().optional(),
+});
+
+export const emojiItemSchema = z.object({
+  emoji: z.string(),
+  startMs: z.number(),
+  durationMs: z.number().optional(),
+  position: z.enum(["center-left", "center-right", "top-right", "top-left", "above-captions", "bottom-center"]).optional(),
+  size: z.number().optional(),
+});
+
+export const emojiConfigSchema = z.object({
+  items: z.array(emojiItemSchema),
+});
+
+export const filmTextureConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  grainOpacity: z.number().min(0).max(1).optional(),
+  vignetteOpacity: z.number().min(0).max(1).optional(),
+});
+
+export const audioVisualizerConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  barCount: z.number().optional(),
+  color: z.string().optional(),
+  position: z.enum(["bottom-center", "bottom-left", "bottom-right"]).optional(),
+  height: z.number().optional(),
+  width: z.number().optional(),
+});
+
+export const focusBadgeConfigSchema = z.object({
+  enabled: z.boolean().optional(),
+  text: z.string(),
+  category: z.enum(["insight", "metric", "principle", "alert", "custom"]).optional(),
+  accentColor: z.string().optional(),
+  position: z.enum(["top-center", "top-left", "top-right"]).optional(),
+  startMs: z.number().optional(),
+  durationMs: z.number().optional(),
+});
+
 export const shortVideoPropsSchema = z.object({
   videoUrl: z.string(),
   durationInFrames: z.number().int().positive(),
@@ -136,4 +243,10 @@ export const shortVideoPropsSchema = z.object({
   subtitles: subtitleConfigSchema.nullable(),
   hook: hookConfigSchema.nullable(),
   effects: effectsConfigSchema.nullable(),
+  progressBar: progressBarConfigSchema.nullable().optional(),
+  emojis: emojiConfigSchema.nullable().optional(),
+  filmTexture: filmTextureConfigSchema.nullable().optional(),
+  audioVisualizer: audioVisualizerConfigSchema.nullable().optional(),
+  focusBadge: focusBadgeConfigSchema.nullable().optional(),
 });
+

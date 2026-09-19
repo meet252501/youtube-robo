@@ -100,7 +100,11 @@ def scene_frame_ranges(scene_boundaries, strategies, total_frames):
         start_f = max(0, min(start_f, total_frames))
         end_f = max(start_f, min(end_f, total_frames))
         if end_f > start_f:
-            ranges.append((start_f, end_f, strategy))
+            if ranges and ranges[-1][2] == strategy and ranges[-1][1] == start_f:
+                # Merge adjacent ranges with the same strategy to avoid chunking A/V drift
+                ranges[-1] = (ranges[-1][0], end_f, strategy)
+            else:
+                ranges.append((start_f, end_f, strategy))
     return ranges
 
 

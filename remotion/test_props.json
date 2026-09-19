@@ -1,0 +1,33 @@
+{
+  "videoUrl": "http://localhost:8123/podcast_clip.mp4",
+  "durationInFrames": 150,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "subtitles": {
+    "captions": [
+      { "text": "This", "startMs": 0, "endMs": 400 },
+      { "text": "is", "startMs": 400, "endMs": 600 },
+      { "text": "a", "startMs": 600, "endMs": 750 },
+      { "text": "massive", "startMs": 750, "endMs": 1200 },
+      { "text": "OPUSCLIP", "startMs": 1200, "endMs": 2000 },
+      { "text": "style", "startMs": 2000, "endMs": 2800 },
+      { "text": "with", "startMs": 2800, "endMs": 3500 },
+      { "text": "Anton", "startMs": 3500, "endMs": 5000 }
+    ],
+    "position": "middle",
+    "style": {
+      "fontFamily": "Anton",
+      "fontSize": 90,
+      "fontColor": "#FFFFFF",
+      "highlightColor": "#FFDD00",
+      "borderColor": "#000000",
+      "borderWidth": 8,
+      "bgColor": "#000000",
+      "bgOpacity": 0,
+      "animation": "pop"
+    }
+  },
+  "hook": null,
+  "effects": null
+}

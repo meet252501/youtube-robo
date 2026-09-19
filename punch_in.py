@@ -57,7 +57,7 @@ BEAT_WINDOW = 0.2
 # has the same median but can still reach 4.6 on a loud clip. No setting left a
 # clip with zero punches.
 MIN_GAP_SECONDS = 18.0
-BEAT_PROMINENCE = 0.60
+BEAT_PROMINENCE = 0.70
 
 
 def _ease(t):

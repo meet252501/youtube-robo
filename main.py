@@ -93,8 +93,8 @@ face_detection = mp_face_detection.FaceDetection(model_selection=1, min_detectio
 
 # Consecutive detections a large target move must survive before the camera
 # follows it (see SmoothedCameraman.update_target). Env-overridable so the
-# damping can be dialled back without a deploy; 1 restores the old behaviour.
-JUMP_CONFIRM_FRAMES = max(int(os.environ.get("JUMP_CONFIRM_FRAMES", "3")), 1)
+# damping can be dialled back without a deploy; 10 makes the camera very stable.
+JUMP_CONFIRM_FRAMES = max(int(os.environ.get("JUMP_CONFIRM_FRAMES", "10")), 1)
 
 # Reset the tracker and the cameraman's damping at every scene cut, so the
 # first face found in the new shot is framed instantly instead of being treated
@@ -128,9 +128,9 @@ class SmoothedCameraman:
              self.crop_width = video_width
              self.crop_height = int(self.crop_width / aspect_ratio)
              
-        # Safe Zone: 20% of the video width
+        # Safe Zone: 35% of the video width
         # As long as the target is within this zone relative to current center, DO NOT MOVE.
-        self.safe_zone_radius = self.crop_width * 0.25
+        self.safe_zone_radius = self.crop_width * 0.35
 
         # A target that teleports further than the safe zone in one detection is
         # far more often a detector error — a second face, a false positive, a
