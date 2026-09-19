@@ -942,10 +942,6 @@
         "young": "#00F0FF",
         "protocols": "#FFD700",
         "better": "#FFD700",
-        "eat slower": "#FFD700",
-        "running": "#FFD700",
-        "sauna": "#FFD700",
-        "cold": "#FFD700",
         "lifespan": "#FFD700",
         "details": "#FFD700",
         "woman": "#FFD700",
@@ -956,7 +952,7 @@
     }
   },
   "hook": {
-    "text": "Fasting isn't simple: Details matter.",
+    "text": "Your 'health plan' is wrong.",
     "size": "L",
     "position": "center",
     "style": "classic",

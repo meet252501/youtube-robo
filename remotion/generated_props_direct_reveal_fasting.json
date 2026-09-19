@@ -940,19 +940,19 @@
         "fast": "#FFE600",
         "fasting": "#00F0FF",
         "young": "#00F0FF",
-        "live": "#FFD700",
-        "age": "#FFD700",
-        "body": "#FFD700",
-        "younger": "#FFD700",
-        "food": "#FFD700",
-        "life": "#FFD700",
-        "years": "#FFD700"
+        "protocols": "#FFD700",
+        "better": "#FFD700",
+        "lifespan": "#FFD700",
+        "details": "#FFD700",
+        "woman": "#FFD700",
+        "man": "#FFD700",
+        "general rules": "#FFD700"
       },
       "outlinePx": 0
     }
   },
   "hook": {
-    "text": "Fasting isn't for young children.",
+    "text": "Fasting rules aren't what you think.",
     "size": "L",
     "position": "center",
     "style": "classic",
@@ -972,8 +972,8 @@
   "emojis": null,
   "filmTexture": {
     "enabled": true,
-    "grainOpacity": 0.04,
-    "vignetteIntensity": 0.6
+    "grainOpacity": 0.02,
+    "vignetteIntensity": 0.3
   },
   "audioVisualizer": null
 }

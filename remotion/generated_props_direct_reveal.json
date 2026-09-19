@@ -941,6 +941,7 @@
         "fasting": "#00F0FF",
         "young": "#00F0FF",
         "protocols": "#FFD700",
+        "better": "#FFD700",
         "eat slower": "#FFD700",
         "running": "#FFD700",
         "sauna": "#FFD700",
@@ -955,7 +956,7 @@
     }
   },
   "hook": {
-    "text": "Start with fasting: The general rules.",
+    "text": "These specific health protocols are essential.",
     "size": "L",
     "position": "center",
     "style": "classic",

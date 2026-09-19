@@ -124,7 +124,10 @@ def main():
         "audioVisualizer": None
     }
     
+    from silence_stripper import strip_silences
     from hook_variant_generator import generate_hook_variants
+    from hook_scorer import score_hook
+
     print("\n--- 4. Multi-Hook Variant Generator (Floor 4) ---")
     hook_variants = generate_hook_variants(transcript, director_plan.get("vibe", "modern_podcast"))
     
@@ -186,6 +189,36 @@ def main():
         except Exception as e:
             print(f"Remotion render failed for variant {variant_id}: {e}")
             
+    print("\n=== 5. Running AI Hook Scorer ===")
+    scores_results = []
+    for variant in hook_variants:
+        variant_id = variant.get("id", "default").replace(" ", "_").lower()
+        output_file = f"output/test_final_remotion_{variant_id}.mp4"
+        if os.path.exists(output_file):
+            print(f">> Scoring Variant: {variant_id}")
+            score_data = score_hook(output_file, variant.get("text", ""))
+            score_data["variant_id"] = variant_id
+            score_data["hook_type"] = variant.get("type", "Unknown")
+            scores_results.append(score_data)
+            print(f"   Score: {score_data.get('score', 0)}/100")
+            print(f"   Rationale: {score_data.get('rationale', '')}")
+            
+    if scores_results:
+        # Sort by score descending
+        scores_results = sorted(scores_results, key=lambda x: x.get("score", 0), reverse=True)
+        with open("output/scores.json", "w", encoding="utf-8") as f:
+            json.dump(scores_results, f, indent=2)
+        winner_id = scores_results[0]['variant_id']
+        print(f"\n🏆 WINNER: {winner_id} with {scores_results[0]['score']}/100!")
+        
+        # Generate Saliency Heatmap for the winner
+        print("\n=== 6. Generating Saliency Heatmap for Winner ===")
+        import saliency_heatmap
+        winner_file = f"output/test_final_remotion_{winner_id}.mp4"
+        heatmap_file = f"output/heatmap_winner_{winner_id}.mp4"
+        if os.path.exists(winner_file):
+            saliency_heatmap.generate_saliency_video(winner_file, heatmap_file)
+
     print("\n=== Running Auto-Comparison against Benchmark ===")
     subprocess.run([sys.executable, "compare_videos_nv.py"], check=False)
 
