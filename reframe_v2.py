@@ -366,7 +366,7 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
     import main as m
     content_ranges = content_ranges or []
 
-    print("   🚀 Reframe engine v2 (ffmpeg-native render)")
+    print("   [REFRAME] Reframe engine v2 (ffmpeg-native render)")
     scenes, fps = m.detect_scenes(input_video)
     fps = float(fps)  # PySceneDetect can hand back a Fraction
     orig_w, orig_h = m.get_video_resolution(input_video)
@@ -391,11 +391,11 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
     if force_strategy:
         strategies = [force_strategy] * len(scenes)
         content_ranges = []  # no screencast/inset upgrades over an explicit choice
-        print(f"   🎯 Framing override: every scene -> {force_strategy}")
+        print(f"   [REFRAME] Framing override: every scene -> {force_strategy}")
     elif passthrough:
         strategies = ['TRACK'] * len(scenes)
         content_ranges = []
-        print(f"   ↕️  Source is already {orig_w}x{orig_h} vertical — "
+        print(f"   [REFRAME] Source is already {orig_w}x{orig_h} vertical — "
               f"passing it through, no reframe")
     else:
         strategies = m.analyze_scenes_strategy(input_video, scenes)
@@ -426,7 +426,7 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
                 input_video, start_f, end_f, fps, splits[start_f])
             if not active_speaker.is_conversation(verdicts):
                 a, b = active_speaker.shares(verdicts)
-                print(f"   🔇 Scene {scene_idx}: one speaker holds the floor "
+                print(f"   [REFRAME] Scene {scene_idx}: one speaker holds the floor "
                       f"({max(a, b):.0%}) — not stacking")
                 del splits[start_f]
                 strategies[scene_idx] = 'GENERAL'
@@ -435,9 +435,9 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
                 alternates[start_f] = (
                     active_speaker.hold(verdicts), splits.pop(start_f))
     if splits:
-        print(f"   🪞 SPLIT layout on {len(splits)} scene(s)")
+        print(f"   [REFRAME] SPLIT layout on {len(splits)} scene(s)")
     if alternates:
-        print(f"   🎬 Speaker-cut layout on {len(alternates)} scene(s)")
+        print(f"   [REFRAME] Speaker-cut layout on {len(alternates)} scene(s)")
 
     # SCREENCAST wins over SPLIT on the rare scene that qualifies for both: two
     # faces beside a chart still means the chart is what the shot is about, and
@@ -452,9 +452,9 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
         try:
             inset = camera_inset.detect(input_video)
         except Exception as e:
-            print(f"   ⚠️ Inset check failed ({e}) — using the screen layouts.")
+            print(f"   [REFRAME] Inset check failed ({e}) — using the screen layouts.")
         if inset:
-            print(f"   📹 Webcam inset at {inset}")
+            print(f"   [REFRAME] Webcam inset at {inset}")
 
     screencasts = {}
     wide_count = 0
@@ -476,11 +476,11 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
             else:
                 wide_count += 1
     if screencasts:
-        print(f"   🖥️ SCREENCAST layout on {len(screencasts)} scene(s)")
+        print(f"   [REFRAME] SCREENCAST layout on {len(screencasts)} scene(s)")
     if wide_count:
-        print(f"   📐 Full-width layout on {wide_count} scene(s)")
+        print(f"   [REFRAME] Full-width layout on {wide_count} scene(s)")
     if inset_count:
-        print(f"   📹 Camera-inset layout on {inset_count} scene(s)")
+        print(f"   [REFRAME] Camera-inset layout on {inset_count} scene(s)")
 
     # The crop geometry comes from the SOURCE dims only — SmoothedCameraman
     # derives crop_width/crop_height from video_width/video_height and never
@@ -499,7 +499,7 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
     if punch_in.ENABLED:
         beats = punch_in.emphasis_times(input_video, len(xs) / fps)
         if beats:
-            print(f"   🔍 Punch-in on {len(beats)} beat(s)")
+            print(f"   [REFRAME] Punch-in on {len(beats)} beat(s)")
 
     crop_w, crop_h = cameraman.crop_width, cameraman.crop_height
 
@@ -521,7 +521,7 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
         xs, strategies = apply_crop_overrides(
             xs, strategies, scene_boundaries, crop_overrides, crop_w,
             orig_w, orig_h=orig_h, splits=splits)
-        print(f"   ✋ Manual framing on {len(crop_overrides)} scene(s)")
+        print(f"   [REFRAME] Manual framing on {len(crop_overrides)} scene(s)")
 
     ranges = scene_frame_ranges(scene_boundaries, strategies, len(xs))
     if not ranges:
@@ -612,5 +612,5 @@ def render(input_video, final_output_video, aspect_ratio, content_ranges=None,
     # Tell the caption pass which stretches are stacked (see layout_ranges).
     layout_ranges.write(final_output_video,
                         [(s / fps, e / fps, strategy) for s, e, strategy in ranges])
-    print(f"   ✅ Clip saved to {final_output_video}")
+    print(f"   [REFRAME] Clip saved to {final_output_video}")
     return True

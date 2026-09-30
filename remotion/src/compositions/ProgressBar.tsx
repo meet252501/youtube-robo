@@ -50,7 +50,6 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ config }) => {
           boxShadow: glow
             ? `0 0 12px ${color}, 0 0 4px rgba(255, 255, 255, 0.8)`
             : "none",
-          transition: "width 0.05s linear",
           borderRadius: "0 2px 2px 0",
         }}
       />

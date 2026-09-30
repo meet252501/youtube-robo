@@ -60,9 +60,16 @@ def generate_mask_video(input_video_path, output_video_path):
             print(f"Segmented {frame_count}/{total_frames} frames...")
             
     cap.release()
-    out.write(mask) # just to be safe
     out.release()
-    print(f"Mask generation complete: {output_video_path}")
+    
+    print(f"Mask generation complete. Transcoding to H.264 for Remotion compatibility...")
+    import subprocess
+    temp_path = output_video_path.replace(".mp4", "_temp.mp4")
+    os.rename(output_video_path, temp_path)
+    subprocess.run(["ffmpeg", "-y", "-i", temp_path, "-c:v", "libx264", "-preset", "fast", "-crf", "18", "-pix_fmt", "yuv420p", "-movflags", "+faststart", output_video_path], check=True, capture_output=True)
+    os.remove(temp_path)
+    
+    print(f"Mask generation and transcode complete: {output_video_path}")
     return True
 
 if __name__ == "__main__":

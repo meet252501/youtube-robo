@@ -11,6 +11,7 @@ import { FocusBadge } from "./FocusBadge";
 import { HDRBloomDef, ColorGradeOverlay } from "./ColorGrading";
 import { DataInfographics } from "./DataInfographics";
 import { BRollOverlay } from "./BRollOverlay";
+import { EmojiStickers } from "./EmojiStickers";
 
 /**
  * Main 15-story composition that layers all professional post-processing
@@ -29,6 +30,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
     colorGrading,
     dataVisualization,
     brollCutaways,
+    emojis,
   } = rawProps as unknown as ShortVideoProps;
     
   // Resolve local files for Remotion
@@ -141,6 +143,9 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
 
       {/* Layer 3.5: AI B-Roll Context Injection */}
       {brollCutaways && brollCutaways.length > 0 && <BRollOverlay cutaways={brollCutaways} />}
+      
+      {/* Layer 3.8: Floating Emojis / Graphics */}
+      {emojis && <EmojiStickers config={emojis} />}
 
       {/* Layer 4: Multi-Font Semantic Multi-Color Subtitles (Standard Foreground if no mask) */}
       {!maskUrl && subtitles && <Subtitles config={subtitles} />}

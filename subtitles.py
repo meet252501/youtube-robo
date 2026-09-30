@@ -121,9 +121,9 @@ def transcribe_audio(video_path):
     # Lazy import: transcribe_backends imports helpers from this module.
     from transcribe_backends import transcribe_media
 
-    _log(f"🎙️  Transcribing audio from: {video_path}")
+    _log(f"[SUBS] Transcribing audio from: {video_path}")
     transcript = transcribe_media(video_path)
-    _log(f"✅ Transcription complete. Language: {transcript['language']}")
+    _log(f"[SUBS] Transcription complete. Language: {transcript['language']}")
     return transcript
 
 
@@ -572,12 +572,12 @@ def burn_subtitles(video_path, srt_path, output_path, alignment=2, fontsize=16,
         output_path
     ]
 
-    _log(f"🎬 Burning subtitles: {' '.join(cmd)}")
+    _log(f"[SUBS] Burning subtitles: {' '.join(cmd)}")
     result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
 
     if result.returncode != 0:
         stderr_text = result.stderr.decode(errors='replace')
-        _log(f"❌ FFmpeg Subtitle Error: {stderr_text}")
+        _log(f"[SUBS] FFmpeg Subtitle Error: {stderr_text}")
         raise Exception(f"FFmpeg failed: {stderr_text}")
 
     return True

@@ -21,7 +21,7 @@ from subtitles import transcribe_audio, generate_ass, burn_subtitles
 from editor import VideoEditor
 import cv2
 
-SOURCE_VIDEO = "raj_shamani.mp4"
+SOURCE_VIDEO = "podcast.mp4"
 CLIP_OUTPUT = "output/test_reframe_only.mp4"
 FINAL_CAPTIONED = "output/test_final_captioned.mp4"
 FINAL_AI = "output/test_final_ai.mp4"
@@ -88,7 +88,7 @@ def main():
         for word in segment.get('words', []):
             raw_text = word['word'].strip()
             # Remove punctuation like OpusClip does for big impact captions
-            clean_text = raw_text.strip(".,?!\"'()[]{}")
+            clean_text = raw_text.strip(".,?!\"'()[]{}") 
             if clean_text:
                 captions.append({
                     "text": clean_text,
@@ -96,9 +96,8 @@ def main():
                     "endMs": int(word['end'] * 1000)
                 })
             
-    # Copy the reframed video to Remotion's public folder so it can access it
-    os.makedirs("remotion/public", exist_ok=True)
-    shutil.copy(CLIP_OUTPUT, "remotion/public/test_reframe_only.mp4")
+    # (Moved the Remotion copy logic to after Color Grading)
+    
 
     # 1.5. GENERATE 3D DEPTH MASK (Floor 11)
     print("\n--- 1.5. Generating Neural Depth Mask for 3D Occlusion ---")
@@ -119,19 +118,26 @@ def main():
     director_plan = analyze_transcript_and_direct(transcript, video_path=CLIP_OUTPUT, video_title=SOURCE_VIDEO)
     
     import urllib.parse
+    import urllib.request
+    
     broll_cutaways = []
-    if director_plan.get("brollCutaways"):
-        for broll in director_plan["brollCutaways"]:
-            prompt_encoded = urllib.parse.quote(broll.get("imagePrompt", "abstract background"))
-            url = f"https://image.pollinations.ai/prompt/{prompt_encoded}?width=1080&height=1920&nologo=true"
-            broll_cutaways.append({
-                "timestampStart": broll.get("timestampStart", 0.0),
-                "duration": broll.get("duration", 2.0),
-                "url": url
-            })
+    # DISABLED PER USER REQUEST:
+    # if director_plan.get("brollCutaways"):
+    #     ...
+    
 
+    # =========================================================================
+    # FLOOR 5: Cinematic LUT / HDR Color Grading (DISABLED PER USER)
+    # =========================================================================
+    print("\n--- 3.5 Cinematic LUT Color Grading (Floor 5) [DISABLED] ---")
+    GRADED_OUTPUT = CLIP_OUTPUT # Bypass grading
+    
+    # Copy the UNGRADED video to Remotion's public folder
+    os.makedirs("remotion/public", exist_ok=True)
+    shutil.copy(GRADED_OUTPUT, "remotion/public/test_graded.mp4")
+    
     props = {
-        "videoUrl": "/test_reframe_only.mp4",
+        "videoUrl": "/test_graded.mp4",
         "maskUrl": "/test_mask.mp4" if os.path.exists(MASK_OUTPUT) else None,
         "durationInFrames": int(frame_count),
         "fps": fps,
@@ -142,91 +148,73 @@ def main():
             "position": "bottom",
             "style": director_plan["subtitles"]
         },
-        "hook": None, # Removed: No clashing header cards at start
+        "hook": None, # Hook is now handled by the splice engine (Floor 4)
         "focusBadge": None, # Removed: No top badges covering original disclaimers
-        "effects": None,
+        "effects": director_plan.get("effects", {
+            "segments": [
+                {
+                    "startSec": move["timestampStart"],
+                    "endSec": move["timestampStart"] + move["duration"],
+                    "zoom": 1,
+                    "zoomCenterX": 0.5,
+                    "zoomCenterY": 0.5,
+                    "brightness": 1.0,
+                    "contrast": 1,
+                    "saturate": 1,
+                    "shake": 0.2 if move.get("easing") == "spring" else 0
+                }
+                for move in (director_plan.get("cameraMoves") or [])
+            ]
+        }),
         "progressBar": director_plan.get("progressBar"),
-        "emojis": None, # Removed: No cartoon stickers
-        "filmTexture": director_plan.get("filmTexture"),
+        "emojis": {"items": director_plan.get("emojis")} if director_plan.get("emojis") else None,
+        "filmTexture": None, # DISABLED PER USER
         "audioVisualizer": None,
-        "brollCutaways": broll_cutaways
+        "brollCutaways": broll_cutaways,
+        "dataVisualization": director_plan.get("dataVisualization"),
+        # Pass through for splice engine
+        "colorGrading": None,
+        "cameraMoves": director_plan.get("cameraMoves") or [],
     }
     
-    from silence_stripper import strip_silences
+    # =========================================================================
+    # FLOOR 4: Multi-Hook Variant Generator + Splice Architecture
+    # =========================================================================
     from hook_variant_generator import generate_hook_variants
+    from splice_variants import run_splice_pipeline
     from hook_scorer import score_hook
 
     print("\n--- 4. Multi-Hook Variant Generator (Floor 4) ---")
     hook_variants = generate_hook_variants(transcript, director_plan.get("vibe", "modern_podcast"))
     
     if not hook_variants:
-        print("No hook variants generated. Falling back to single render.")
+        print("No hook variants generated. Falling back to single body-only render.")
         hook_variants = [{"id": "default", "text": "", "type": "none"}]
 
-    print(f"Generating {len(hook_variants)} variants for A/B Testing...")
-    import subprocess
-    npx_cmd = "npx.cmd" if os.name == "nt" else "npx"
-    
-    for i, variant in enumerate(hook_variants):
-        variant_id = variant.get('id', f'var_{i}')
-        hook_text = variant.get('text', '')
-        
-        print(f"\n>> Rendering Variant {i+1}: {variant_id.upper()}")
-        print(f">> Hook Text: {hook_text}")
-        
-        # Inject the hook into props
-        if hook_text:
-            props["hook"] = {
-                "text": hook_text,
-                "size": "L",
-                "position": "center",
-                "style": "classic",
-                "entranceAnimation": "spring",
-                "displayDurationSec": 2.5
-            }
-        else:
-            props["hook"] = None
+    print(f"\n--- 4.1. Splice Architecture: 1 body + {len(hook_variants)} hook clips ---")
+    hook_duration_sec = 2.5  # Each hook displays for 2.5 seconds
 
-        props_path = f"remotion/generated_props_{variant_id}.json"
-        with open(props_path, "w", encoding="utf-8") as f:
-            json.dump(props, f, indent=2)
-            
-        output_file = f"../output/test_final_remotion_{variant_id}.mp4"
-        
-        print(f"Running Remotion renderer for {variant_id} (universal YUV420P & 1s GOP)...")
-        start_time = time.time()
-        try:
-            subprocess.run(
-                [
-                    npx_cmd, "remotion", "render",
-                    "src/index.ts", "ShortVideo",
-                    output_file,
-                    f"--props=./generated_props_{variant_id}.json",
-                    "--pixel-format=yuv420p",
-                    "--codec=h264",
-                    "--gop=30",
-                    "--crf=18",
-                    "--audio-codec=aac",
-                    "--audio-bitrate=192k",
-                    "--offthreadvideo-video-threads=4"
-                ],
-                cwd="remotion",
-                check=True
-            )
-            print(f"Finished! Variant saved to {output_file} in {time.time() - start_time:.1f}s.")
-        except Exception as e:
-            print(f"Remotion render failed for variant {variant_id}: {e}")
-            
+    splice_result = run_splice_pipeline(
+        props=props,
+        hook_variants=hook_variants,
+        hook_duration_sec=hook_duration_sec,
+        remotion_cwd="remotion",
+        output_dir="output",
+    )
+
+    # =========================================================================
+    # FLOOR 5 (FUTURE): Hook Scorer — score each variant
+    # =========================================================================
     print("\n=== 5. Running AI Hook Scorer ===")
     scores_results = []
-    for variant in hook_variants:
-        variant_id = variant.get("id", "default").replace(" ", "_").lower()
-        output_file = f"output/test_final_remotion_{variant_id}.mp4"
+    for variant_info in splice_result.get("variants", []):
+        variant_id = variant_info["variant_id"]
+        output_file = variant_info["path"]
         if os.path.exists(output_file):
             print(f">> Scoring Variant: {variant_id}")
-            score_data = score_hook(output_file, variant.get("text", ""))
+            score_data = score_hook(output_file, variant_info.get("hook_text", ""))
             score_data["variant_id"] = variant_id
-            score_data["hook_type"] = variant.get("type", "Unknown")
+            score_data["hook_type"] = variant_info.get("hook_type", "Unknown")
             scores_results.append(score_data)
             print(f"   Score: {score_data.get('score', 0)}/100")
             print(f"   Rationale: {score_data.get('rationale', '')}")
@@ -247,7 +235,52 @@ def main():
         if os.path.exists(winner_file):
             saliency_heatmap.generate_saliency_video(winner_file, heatmap_file)
 
+        # Floor 12: Sound Design Engine
+        print("\n=== 7. Sound Design Engine (Floor 12) ===")
+        import sound_design
+        sfx_file = f"output/test_final_sfx_{winner_id}.mp4"
+        if os.path.exists(winner_file):
+            sound_design.apply_sound_design(winner_file, sfx_file, director_plan)
+            
+        # Floor 13: Smart Thumbnail Generator (DISABLED)
+        # print("\n=== 8. Smart Thumbnail Generator (Floor 13) ===")
+        # import thumbnail_generator
+        # thumb_file = f"output/smart_thumbnail_{winner_id}.jpg"
+        # if os.path.exists(sfx_file):
+        #     thumbnail_generator.generate_thumbnail(sfx_file, "", thumb_file)
+            
+        # Floor 14: Retention Graph Predictor
+        print("\n=== 9. Retention Graph Predictor (Floor 14) ===")
+        import retention_predictor
+        retention_file = f"output/retention_prediction_{winner_id}.png"
+        retention_predictor.generate_retention_graph("output/pipeline_result.json", retention_file)
+
+        # Floor 15: Penthouse Export Presets
+        print("\n=== 10. Platform Export Presets (Floor 15) ===")
+        import export_presets
+        if os.path.exists(sfx_file):
+            export_presets.generate_platform_exports(sfx_file, "output")
+
+    # Save full pipeline results
+    pipeline_result = {
+        "source": SOURCE_VIDEO,
+        "body_render": splice_result.get("body_path"),
+        "variants": splice_result.get("variants", []),
+        "verification": splice_result.get("verification"),
+        "scores": scores_results,
+        "winner": scores_results[0] if scores_results else None,
+        "director_plan": {
+            "vibe": director_plan.get("vibe"),
+            "coreThesis": director_plan.get("coreThesis"),
+            "subtitles_font": director_plan.get("subtitles", {}).get("fontFamily"),
+        },
+    }
+    with open("output/pipeline_result.json", "w", encoding="utf-8") as f:
+        json.dump(pipeline_result, f, indent=2, default=str)
+    print(f"\nPipeline result saved to output/pipeline_result.json")
+
     print("\n=== Running Auto-Comparison against Benchmark ===")
+    import subprocess
     subprocess.run([sys.executable, "compare_videos_nv.py"], check=False)
 
 if __name__ == "__main__":

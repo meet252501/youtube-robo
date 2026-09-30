@@ -27,9 +27,22 @@ class BRollCutaway(BaseModel):
     duration: float = Field(description="Duration of the B-Roll in seconds (e.g. 2.0)")
     imagePrompt: str = Field(description="A highly descriptive AI image generation prompt for the B-Roll (e.g., 'macro shot of glowing human cells dividing under a microscope, cinematic lighting')")
 
+class EmojiItem(BaseModel):
+    emoji: str = Field(description="The actual emoji character (e.g., 🤯, 💰, 📉, 🚀)")
+    startMs: float = Field(description="Start time in milliseconds (e.g., 2500)")
+    durationMs: float = Field(description="Duration in milliseconds (e.g., 1500)")
+    position: str = Field(description="Position: 'center-left', 'center-right', 'top-right', 'top-left', 'above-captions', 'bottom-center'")
+    size: int = Field(default=110, description="Font size of the emoji (e.g., 110, 150)")
+
 # ==============================================================================
 # FLOOR 3 / 15-STORY ENTERPRISE MULTIMODAL AI CREATIVE DIRECTOR
 # ==============================================================================
+
+class FilmTextureConfig(BaseModel):
+    enabled: bool = Field(default=False)
+    grainOpacity: float = Field(default=0.05)
+    vignetteOpacity: float = Field(default=0.3)
+    textureType: str = Field(default="grain", description="'grain' for cinematic, 'paper' for Ali Abdaal / documentary style")
 
 class VisualPerception(BaseModel):
     setting: str = Field(description="Visual environment description (e.g. Dark podcast studio, Shure SM7B microphones, warm rim lighting)")
@@ -56,6 +69,7 @@ class ArtisticDirection(BaseModel):
     showTopOverlays: bool = Field(description="Strictly False for studio interviews and videos with native intro disclaimers")
     emphasisWords: List[str] = Field(description="8-15 high-weight conceptual anchor words to emphasize in subtitles")
     colorGradingStyle: str = Field(description="Cinematic LUT style: 'teal-orange', 'moody-dark', 'vibrant-pop', or 'vintage-film'")
+    colorGradeLUT: str = Field(default="intellectual_podcast", description="Floor 5: Name of the .cube 3D LUT to apply. One of: intellectual_podcast, philosophical_interview, business_podcast, high_energy, moody_story, scientific_breakdown, vibrant_pop, vintage_film, clean_modern")
     hdrBloom: bool = Field(description="True if the video lighting warrants an HDR bloom effect (glowing highlights)")
 
 class AIDirectorPlan(BaseModel):
@@ -66,6 +80,8 @@ class AIDirectorPlan(BaseModel):
     dataVisualization: DataVisualization
     cameraMoves: List[CameraMove] = Field(default=[], description="List of dynamic cinematic camera zoom movements triggered by intense moments in the transcript.")
     brollCutaways: List[BRollCutaway] = Field(default=[], description="List of AI B-Roll cutaways to inject visual context.")
+    emojis: List[EmojiItem] = Field(default=[], description="List of floating emojis to pop up for visual engagement (Ali Abdaal / MrBeast style).")
+    filmTexture: FilmTextureConfig
     hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook variants for A/B testing")
 
 # Premium Typography Collections (Google Fonts bundled in Remotion)
@@ -231,12 +247,23 @@ def analyze_transcript_and_direct(
                  * Placement: Subtitles in lower-third safe zone (below chin, above lower edge).
                - Color Grading: Choose a style ('teal-orange', 'moody-dark', 'vibrant-pop', 'vintage-film'). 
                  * Select 'hdrBloom'=true if the scene has high-contrast practical lights or needs a cinematic glow.
-               - NO EMOJIS. Emojis read as amateurish. We strictly use typography, layout, and data visualization.
+               - USE EMOJIS & GRAPHICS. Ali Abdaal / MrBeast editing requires floating emojis for visual emphasis.
+               - Color Grade LUT (Floor 5): Select a .cube 3D LUT name that best matches the visual environment and dialogue tone:
+                 * 'intellectual_podcast' — subdued, lifted blacks, teal shadows, warm highlights
+                 * 'philosophical_interview' — golden warmth, editorial lift
+                 * 'business_podcast' — clean neutral-warm, flattering skin tones
+                 * 'high_energy' — punchy contrast, saturated, warm
+                 * 'moody_story' — teal-orange, crushed shadows
+                 * 'scientific_breakdown' — clinical cool tones, blue shadows
+                 * 'vibrant_pop' — highly saturated, warm, energetic
+                 * 'vintage_film' — sepia, lifted blacks, desaturated
+                 * 'clean_modern' — minimal grading, subtle contrast
 
-            D. DATA VISUALIZATION & B-ROLL (FLOORS 7 & 10):
-               - Scan the transcript for specific quantitative data (percentages, money, days/hours, sizes) for `dataVisualization`.
-               - Scan the transcript for highly visual concepts (e.g., "cells", "money", "gym", "universe").
-               - Schedule 1 or 2 `brollCutaways` where an AI image will cover the screen for 2-3 seconds to break up the talking head. The `imagePrompt` MUST be highly descriptive (e.g., "cinematic 4k macro shot of glowing blue cellular biology").
+            D. RETENTION EDITING (MRBEAST / ABDAAL TACTICS) (FLOORS 7, 9, 10):
+               - EMOJIS: Generate 1-4 strategic `emojis` that pop up (e.g. 🤯, 📉, 💰) synced to high-impact moments. Use 'above-captions' or 'top-right'.
+               - CAMERA MOVES & SHAKES: Schedule 1-3 dynamic `cameraMoves`. Use `scaleTarget` 1.15 to 1.3 for punch-ins. For huge emphasis, use `easing: spring`.
+               - DATA VISUALIZATION: Scan the transcript for specific quantitative data (percentages, money, days/hours) for `dataVisualization`.
+               - B-ROLL: Schedule 1 or 2 `brollCutaways` where an AI image will cover the screen for 2-3 seconds to break up the talking head.
                
             E. OUTPUT FORMAT:
             You MUST return a raw JSON object (and ONLY a JSON object) matching exactly this structure:
@@ -266,6 +293,7 @@ def analyze_transcript_and_direct(
                     "showTopOverlays": false,
                     "emphasisWords": ["word1", "word2"],
                     "colorGradingStyle": "teal-orange",
+                    "colorGradeLUT": "intellectual_podcast",
                     "hdrBloom": false
                 }},
                 "directorSummary": "string",
@@ -275,6 +303,12 @@ def analyze_transcript_and_direct(
                     "metricLabel": "string",
                     "chartType": "counter-gauge",
                     "timestampStart": 0.0
+                }},
+                "filmTexture": {{
+                    "enabled": true,
+                    "grainOpacity": 0.08,
+                    "vignetteOpacity": 0.2,
+                    "textureType": "paper"
                 }},
                 "cameraMoves": [
                     {{
@@ -289,6 +323,15 @@ def analyze_transcript_and_direct(
                         "timestampStart": 10.5,
                         "duration": 2.5,
                         "imagePrompt": "highly detailed cinematic shot of..."
+                    }}
+                ],
+                "emojis": [
+                    {{
+                        "emoji": "🤯",
+                        "startMs": 10500.0,
+                        "durationMs": 1500.0,
+                        "position": "above-captions",
+                        "size": 110
                     }}
                 ],
                 "hookVariants": null
@@ -331,6 +374,9 @@ def analyze_transcript_and_direct(
     semantic_color_map = build_semantic_color_map(transcript, emphasis_words)
     highlight_col = art.highlightColor or "#FFD700"
 
+    # Floor 5: Resolve the .cube LUT name
+    color_grade_lut = getattr(art, "colorGradeLUT", None) or "intellectual_podcast"
+
     # Assemble pristine Remotion configuration props
     return {
         "vibe": plan.conversationalAnalysis.primaryVibe,
@@ -349,7 +395,10 @@ def analyze_transcript_and_direct(
         },
         "hookVariants": plan.hookVariants,
         "hook": None,          # Removed: Strictly no starting box overlays clashing with video intro
-        "focusBadge": None,    # Removed: Strictly no top badges covering original disclaimers
+        "focusBadge": None if plan.visualPerception.hasNativeIntroOrDisclaimer else {
+            "text": plan.conversationalAnalysis.keyDiscussionTopics[0].upper() if plan.conversationalAnalysis.keyDiscussionTopics else "INSIGHT",
+            "color": highlight_col
+        },
         "progressBar": {
             "enabled": True,
             "position": "top",
@@ -364,6 +413,7 @@ def analyze_transcript_and_direct(
             "hdrBloom": art.hdrBloom,
             "intensity": 0.6 if plan.visualPerception.lightingMood == "low_key_moody" else 0.4
         },
+        "colorGradeLUT": color_grade_lut,  # Floor 5: .cube LUT name for FFmpeg post-pass
         "emojis": None,        # Removed: Strictly no cartoon stickers
         "filmTexture": {
             "enabled": True,
@@ -425,6 +475,7 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic dark moody shot of a glowing dna helix")
             ],
             directorSummary="Intellectual conversation about life and biology.",
+            filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),
             hookVariants=None
         )
     elif any(k in text_lower for k in ["business", "money", "dollar", "revenue", "founder", "market", "scale"]):
@@ -468,6 +519,7 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic 4k shot of a modern skyscraper boardroom at night")
             ],
             directorSummary="High-credibility financial and entrepreneurial layout.",
+            filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),
             hookVariants=None
         )
     else:
@@ -509,5 +561,6 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
             cameraMoves=[],
             brollCutaways=[],
             directorSummary="Clean intellectual dialogue short.",
+            filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),
             hookVariants=None
         )

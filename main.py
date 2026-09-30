@@ -132,9 +132,9 @@ class SmoothedCameraman:
              self.crop_width = video_width
              self.crop_height = int(self.crop_width / aspect_ratio)
              
-        # Safe Zone: 35% of the video width
+        # Safe Zone: 10% of the video width (Tighter tracking like OpusClip)
         # As long as the target is within this zone relative to current center, DO NOT MOVE.
-        self.safe_zone_radius = self.crop_width * 0.35
+        self.safe_zone_radius = self.crop_width * 0.10
 
         # A target that teleports further than the safe zone in one detection is
         # far more often a detector error — a second face, a false positive, a
@@ -156,7 +156,7 @@ class SmoothedCameraman:
         # calmer and 23 are unchanged — but 7 get BUSIER, up to 59 -> 108px/s,
         # because committing later can leave the camera further to travel. Net
         # strongly positive, not universally so.
-        self.jump_confirm_frames = JUMP_CONFIRM_FRAMES
+        self.jump_confirm_frames = 3 # Fast response time
         self._pending_target = None
         self._pending_count = 0
         self._snap_pending = False

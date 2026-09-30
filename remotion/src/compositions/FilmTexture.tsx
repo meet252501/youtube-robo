@@ -14,7 +14,7 @@ export const FilmTexture: React.FC<FilmTextureProps> = ({ config }) => {
     return null;
   }
 
-  const { grainOpacity = 0.05, vignetteOpacity = 0.3 } = config;
+  const { grainOpacity = 0.05, vignetteOpacity = 0.3, textureType = "grain" } = config;
 
   // Generate subtle dynamic procedural noise offset
   const grainSeed = (frame % 10) * 0.1;
@@ -39,8 +39,8 @@ export const FilmTexture: React.FC<FilmTextureProps> = ({ config }) => {
         />
       )}
 
-      {/* 2. Micro Film Grain using SVG filter */}
-      {grainOpacity > 0 && (
+      {/* 2. Texture Overlay (Grain or Paper) */}
+      {grainOpacity > 0 && textureType === "grain" && (
         <svg
           style={{
             position: "absolute",
@@ -64,6 +64,53 @@ export const FilmTexture: React.FC<FilmTextureProps> = ({ config }) => {
             width="100%"
             height="100%"
             filter={`url(#noise-${frame % 4})`}
+          />
+        </svg>
+      )}
+
+      {/* 3. Paper Texture (Halftone/Creases) */}
+      {grainOpacity > 0 && textureType === "paper" && (
+        <svg
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            opacity: grainOpacity * 2, // Paper needs to be slightly more visible
+            mixBlendMode: "multiply", // Darkens for a printed halftone look
+            filter: "contrast(1.5) sepia(0.2)",
+          }}
+        >
+          <filter id="paper-texture">
+            {/* Low freq for crinkles/creases */}
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.01 0.02"
+              numOctaves="4"
+              seed="5"
+              result="clouds"
+            />
+            {/* High freq for paper tooth/halftone dots */}
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.4"
+              numOctaves="2"
+              seed="1"
+              result="noise"
+            />
+            {/* Blend them */}
+            <feBlend in="clouds" in2="noise" mode="screen" result="blend" />
+            <feColorMatrix type="matrix" values="
+              1 0 0 0 0
+              0 0.95 0 0 0
+              0 0.9 0 0 0
+              0 0 0 1.5 0" in="blend" result="colored" />
+          </filter>
+          <rect
+            width="100%"
+            height="100%"
+            fill="#fff"
+            filter="url(#paper-texture)"
           />
         </svg>
       )}

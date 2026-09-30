@@ -1,5 +1,5 @@
 import React from "react";
-import { useCurrentFrame, useVideoConfig, interpolate } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate, random } from "remotion";
 import type { EffectsConfig, EffectSegment } from "../lib/types";
 
 interface VideoEffectsProps {
@@ -32,8 +32,20 @@ export const VideoEffects: React.FC<VideoEffectsProps> = ({
   }
 
   const currentTimeSec = frame / fps;
-  const { zoom, centerX, centerY, brightness, contrast, saturate } =
+  const { zoom, centerX, centerY, brightness, contrast, saturate, shake } =
     getInterpolatedValues(config.segments, currentTimeSec, frame, fps);
+
+  // Apply high-frequency camera shake if shake intensity > 0
+  let shakeX = 0;
+  let shakeY = 0;
+  if (shake > 0) {
+    // Generate chaotic frame-by-frame noise
+    const noiseX = random(`shake-x-${frame}`) - 0.5;
+    const noiseY = random(`shake-y-${frame}`) - 0.5;
+    // Scale by shake intensity (e.g., 20px max deflection)
+    shakeX = noiseX * 30 * shake;
+    shakeY = noiseY * 30 * shake;
+  }
 
   const filterParts: string[] = [];
   if (brightness !== 1) filterParts.push(`brightness(${brightness})`);
@@ -55,7 +67,7 @@ export const VideoEffects: React.FC<VideoEffectsProps> = ({
         style={{
           width: "100%",
           height: "100%",
-          transform: `scale(${zoom})`,
+          transform: `scale(${zoom}) translate(${shakeX}px, ${shakeY}px)`,
           transformOrigin: `${centerX * 100}% ${centerY * 100}%`,
           filter: filterStr,
         }}
@@ -73,6 +85,7 @@ interface InterpolatedValues {
   brightness: number;
   contrast: number;
   saturate: number;
+  shake: number;
 }
 
 function getInterpolatedValues(
@@ -89,6 +102,7 @@ function getInterpolatedValues(
     brightness: 1,
     contrast: 1,
     saturate: 1,
+    shake: 0,
   };
 
   // Find active segment
@@ -166,6 +180,7 @@ function getInterpolatedValues(
     brightness: lerp(1, active.brightness, factor),
     contrast: lerp(1, active.contrast, factor),
     saturate: lerp(1, active.saturate, factor),
+    shake: active.shake || 0, // Shake does not lerp, it's either on or off for the segment
   };
 }
 
@@ -185,6 +200,7 @@ function lerpSegments(
     brightness: lerp(a.brightness, b.brightness, t),
     contrast: lerp(a.contrast, b.contrast, t),
     saturate: lerp(a.saturate, b.saturate, t),
+    shake: t < 0.5 ? (a.shake || 0) : (b.shake || 0),
   };
 }
 
@@ -200,6 +216,7 @@ function lerpToDefaults(
     brightness: lerp(seg.brightness, defaults.brightness, t),
     contrast: lerp(seg.contrast, defaults.contrast, t),
     saturate: lerp(seg.saturate, defaults.saturate, t),
+    shake: lerp(seg.shake || 0, defaults.shake, t),
   };
 }
 
@@ -215,5 +232,6 @@ function lerpFromDefaults(
     brightness: lerp(defaults.brightness, seg.brightness, t),
     contrast: lerp(defaults.contrast, seg.contrast, t),
     saturate: lerp(defaults.saturate, seg.saturate, t),
+    shake: lerp(defaults.shake, seg.shake || 0, t),
   };
 }

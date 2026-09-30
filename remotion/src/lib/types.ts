@@ -65,6 +65,7 @@ export interface EffectSegment {
   brightness: number;
   contrast: number;
   saturate: number;
+  shake?: number;
 }
 
 export interface EffectsConfig {
@@ -107,6 +108,7 @@ export interface FilmTextureConfig {
   enabled?: boolean;
   grainOpacity?: number;
   vignetteOpacity?: number;
+  textureType?: "grain" | "paper";
 }
 
 // --- Audio Visualizer config ---
@@ -214,6 +216,7 @@ export const effectSegmentSchema = z.object({
   brightness: z.number().min(0).max(3),
   contrast: z.number().min(0).max(3),
   saturate: z.number().min(0).max(3),
+  shake: z.number().min(0).max(5).optional(),
 });
 
 export const effectsConfigSchema = z.object({
@@ -245,6 +248,7 @@ export const filmTextureConfigSchema = z.object({
   enabled: z.boolean().optional(),
   grainOpacity: z.number().min(0).max(1).optional(),
   vignetteOpacity: z.number().min(0).max(1).optional(),
+  textureType: z.enum(["grain", "paper"]).optional(),
 });
 
 export const audioVisualizerConfigSchema = z.object({
@@ -297,7 +301,7 @@ export const ShortVideoSchema = z.object({
   brollCutaways: z.array(z.object({
     timestampStart: z.number(),
     duration: z.number(),
-    url: z.string().url()
+    url: z.string()
   })).optional(),
 });
 

@@ -64,7 +64,7 @@ _NULL_GATE = _NullGate()
 
 
 class _TranscribeProgress:
-    """Emits '🎙️ Transcribing… NN% (Xs)' lines at 25% steps.
+    """Emits '[ASR] Transcribing... NN% (Xs)' lines at 25% steps.
 
     These are the only transcription lines cloud users see (log_view keeps
     them), so they must stay free of technical detail.
@@ -81,7 +81,7 @@ class _TranscribeProgress:
         pct = min(int(position_seconds / self.total * 100), 100)
         while pct >= self.next_pct and self.next_pct <= 100:
             elapsed = int(time.time() - self.started)
-            print(f"🎙️ Transcribing… {self.next_pct}% ({elapsed}s)", flush=True)
+            print(f"[ASR] Transcribing... {self.next_pct}% ({elapsed}s)", flush=True)
             self.next_pct += 25
 
 # --- whisper singleton ------------------------------------------------------
@@ -147,7 +147,7 @@ def run_whisper_transcription(media_path, **params):
     except RuntimeError as e:
         if _whisper_force_cpu or "cuda" not in str(e).lower():
             raise
-        print(f"⚠️ [ASR] whisper GPU failed ({e}) — retrying on CPU", flush=True)
+        print(f"[ASR] whisper GPU failed ({e}) -- retrying on CPU", flush=True)
         _whisper_force_cpu = True
         with _whisper_lock:
             _whisper_model = None  # drop the GPU model to release its VRAM
@@ -368,13 +368,13 @@ def transcribe_media(media_path):
             transcript = _transcribe_with_parakeet(media_path)
             reason = _parakeet_fallback_reason(transcript)
             if reason is None:
-                print(f"🎙️ [ASR] parakeet ok: lang={transcript['language']} "
+                print(f"[ASR] parakeet ok: lang={transcript['language']} "
                       f"segments={len(transcript['segments'])}")
                 return transcript
-            print(f"⚠️ [ASR] parakeet result rejected ({reason}) — "
+            print(f"[ASR] parakeet result rejected ({reason}) -- "
                   f"falling back to whisper")
         except Exception as e:
-            print(f"⚠️ [ASR] parakeet failed ({type(e).__name__}: {e}) — "
+            print(f"[ASR] parakeet failed ({type(e).__name__}: {e}) -- "
                   f"falling back to whisper")
 
     return _transcribe_with_whisper(media_path)

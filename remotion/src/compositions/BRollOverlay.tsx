@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, Img, interpolate } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, Img, interpolate, staticFile } from "remotion";
 import type { BRollCutaway } from "../lib/types";
 
 export const BRollOverlay: React.FC<{ cutaways: BRollCutaway[] }> = ({ cutaways }) => {
@@ -40,7 +40,7 @@ export const BRollOverlay: React.FC<{ cutaways: BRollCutaway[] }> = ({ cutaways 
     <AbsoluteFill style={{ opacity }}>
       <AbsoluteFill style={{ transform: `scale(${scale})`, transformOrigin: "center center" }}>
         <Img 
-          src={activeCutaway.url} 
+          src={staticFile(activeCutaway.url)} 
           style={{ width: "100%", height: "100%", objectFit: "cover" }} 
         />
       </AbsoluteFill>
