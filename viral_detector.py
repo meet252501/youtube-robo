@@ -131,9 +131,32 @@ def detect_viral_moments(transcript_words: List[Dict[str, Any]], top_k: int = 3,
     for c in candidates:
         c["pre_score"] = pre_score_candidate(c)
         
-    # Sort and take top 10 for LLM
-    top_candidates = sorted(candidates, key=lambda x: x["pre_score"], reverse=True)[:10]
-    top_candidates = [c for c in top_candidates if c["pre_score"] >= min_score * 0.5] # Lenient pre-filter
+    # 2.5 Filter overlapping candidates
+    sorted_candidates = sorted(candidates, key=lambda x: x["pre_score"], reverse=True)
+    filtered_candidates = []
+    for c in sorted_candidates:
+        if c["pre_score"] < min_score * 0.5:
+            continue
+        
+        is_overlapping = False
+        for fc in filtered_candidates:
+            overlap_start = max(c["startMs"], fc["startMs"])
+            overlap_end = min(c["endMs"], fc["endMs"])
+            overlap_time = max(0, overlap_end - overlap_start)
+            
+            if overlap_time > 0:
+                # If overlap is more than 50% of either clip, skip it
+                ratio_c = overlap_time / (c["endMs"] - c["startMs"])
+                ratio_fc = overlap_time / (fc["endMs"] - fc["startMs"])
+                if ratio_c > 0.5 or ratio_fc > 0.5:
+                    is_overlapping = True
+                    break
+                    
+        if not is_overlapping:
+            filtered_candidates.append(c)
+            
+    # Take top 10 for LLM
+    top_candidates = filtered_candidates[:10]
     
     if not top_candidates:
         return []
