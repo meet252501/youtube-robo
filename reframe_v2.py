@@ -162,7 +162,8 @@ def general_filtergraph(out_w, out_h, content_h=None, orig_w=None, orig_h=None):
     return (
         f"[0:v]split=2[bga][fga];"
         f"[bga]scale=-2:{out_h},crop=w=min(iw\\,{out_w}):h={out_h},"
-        f"scale={out_w}:{out_h},gblur=sigma=12[bg];"
+        f"scale={out_w}:{out_h},boxblur=luma_radius=40:luma_power=5,"
+        f"colorchannelmixer=rr=0.6:gg=0.6:bb=0.6[bg];"
         # Scale by HEIGHT, then trim any overflow to the output width. crop
         # centres by default, and min() makes it a no-op when the scaled source
         # is already narrower than the frame (portrait/square sources).

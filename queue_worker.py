@@ -25,6 +25,7 @@ from silence_stripper import strip_silences
 from reframe_v2 import render as render_reframe
 from color_grade import apply_color_grade
 from qa_frames import run_qa
+from ffmpeg_utils import get_export_encode_args
 
 os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
 os.environ["WHISPER_MODEL"] = "small"
@@ -202,7 +203,9 @@ def process_pending_render_tasks():
                 pass2_cmd = [
                     "ffmpeg", "-y", "-i", raw_remotion_file,
                     "-af", f"loudnorm=I=-14:TP=-1.0:LRA=7:measured_I={loudnorm_stats.get('input_i')}:measured_LRA={loudnorm_stats.get('input_lra')}:measured_TP={loudnorm_stats.get('input_tp')}:measured_thresh={loudnorm_stats.get('input_thresh')}:linear=true",
-                    "-c:v", "libx264", "-crf", "15", "-preset", "slow", "-c:a", "aac", "-ar", "48000", "-b:a", "192k",
+                    "-c:v", "libx264"
+                ] + get_export_encode_args() + [
+                    "-crf", "15", "-preset", "slow", "-c:a", "aac", "-ar", "48000", "-b:a", "192k",
                     final_output
                 ]
                 subprocess.run(pass2_cmd, check=True)

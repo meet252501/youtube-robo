@@ -2,6 +2,8 @@ import os
 import subprocess
 import time
 
+from ffmpeg_utils import get_export_encode_args
+
 def generate_platform_exports(video_path: str, output_dir: str = "output"):
     """
     Floor 15: Penthouse - Platform-Optimized Export Presets.
@@ -13,12 +15,7 @@ def generate_platform_exports(video_path: str, output_dir: str = "output"):
     basename = os.path.splitext(os.path.basename(video_path))[0]
     
     # Enforce strict 30-frame GOP and precise SDR color tags across all platforms
-    base_cmd = [
-        "-c:v", "libx264", 
-        "-g", "30", "-keyint_min", "30", "-sc_threshold", "0",
-        "-pix_fmt", "yuv420p", "-color_range", "tv", 
-        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709"
-    ]
+    base_cmd = ["-c:v", "libx264"] + get_export_encode_args()
     
     presets = {
         "tiktok": {

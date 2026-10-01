@@ -19,6 +19,18 @@ QUALITY = "quality"            # was: -preset medium -crf 18
 QUALITY_FAST = "quality_fast"  # was: -preset fast -crf 18
 DELIVERY = "delivery"          # was: -preset fast -crf 22
 
+def get_export_encode_args():
+    """
+    Returns the GOP and color management flags for final delivery.
+    Enforces a strict 30-frame keyframe interval and SDR BT.709 color space.
+    """
+    return [
+        "-g", "30", "-keyint_min", "30", "-sc_threshold", "0",
+        "-pix_fmt", "yuv420p", "-color_range", "tv",
+        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709"
+    ]
+
+
 _X264_ARGS = {
     QUALITY: ["-c:v", "libx264", "-preset", "slow", "-crf", "16"],
     QUALITY_FAST: ["-c:v", "libx264", "-preset", "slow", "-crf", "17"],

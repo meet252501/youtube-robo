@@ -6,7 +6,7 @@ import urllib.request
 import uuid
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
-from ffmpeg_utils import video_encode_args, QUALITY, METADATA_SCRUB
+from ffmpeg_utils import video_encode_args, QUALITY, METADATA_SCRUB, get_export_encode_args
 
 
 def _truncate_bytes(text, max_bytes):
@@ -432,6 +432,7 @@ def add_hook_to_video(video_path, text, output_path, position="top", font_scale=
                 + (f":enable='between(t,0,{float(duration)})'" if duration else ""),
             '-c:a', 'copy',
             *video_encode_args(QUALITY),
+            *get_export_encode_args(),
             *METADATA_SCRUB,
             '-movflags', '+faststart',
             output_path
