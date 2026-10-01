@@ -1,0 +1,28 @@
+{
+  "videoUrl": "/test_graded.mp4",
+  "maskUrl": "/test_mask.mp4",
+  "durationInFrames": 75,
+  "fps": 30.0,
+  "width": 1080,
+  "height": 1920,
+  "hook": {
+    "text": "Here is the undeniable truth.",
+    "size": "L",
+    "position": "center",
+    "style": "classic",
+    "entranceAnimation": "spring",
+    "displayDurationSec": 2.5
+  },
+  "colorGrading": null,
+  "filmTexture": null,
+  "progressBar": {
+    "enabled": true,
+    "position": "top",
+    "height": 5,
+    "color": "#FFD700",
+    "backgroundColor": "rgba(0,0,0,0.30)",
+    "glow": true
+  },
+  "cameraMoves": [],
+  "fullVideoDurationInFrames": 934
+}

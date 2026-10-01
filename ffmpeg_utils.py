@@ -20,9 +20,9 @@ QUALITY_FAST = "quality_fast"  # was: -preset fast -crf 18
 DELIVERY = "delivery"          # was: -preset fast -crf 22
 
 _X264_ARGS = {
-    QUALITY: ["-c:v", "libx264", "-preset", "medium", "-crf", "18"],
-    QUALITY_FAST: ["-c:v", "libx264", "-preset", "fast", "-crf", "18"],
-    DELIVERY: ["-c:v", "libx264", "-preset", "fast", "-crf", "22"],
+    QUALITY: ["-c:v", "libx264", "-preset", "slow", "-crf", "16"],
+    QUALITY_FAST: ["-c:v", "libx264", "-preset", "slow", "-crf", "17"],
+    DELIVERY: ["-c:v", "libx264", "-preset", "slow", "-crf", "17"],
 }
 
 # NVENC -cq is not 1:1 with x264 CRF: benchmarked on the prod GPU (RTX 4000
@@ -32,14 +32,14 @@ _X264_ARGS = {
 # OpenCV) nvenc otherwise emits H.264 in gbrp/GBR colorspace, which ffmpeg
 # reads fine but web players render as a magenta/green mess.
 _NVENC_ARGS = {
-    QUALITY: ["-c:v", "h264_nvenc", "-preset", "p5", "-tune", "hq",
-              "-rc", "vbr", "-cq", "25", "-b:v", "0",
+    QUALITY: ["-c:v", "h264_nvenc", "-preset", "p6", "-tune", "hq",
+              "-rc", "vbr", "-cq", "16", "-b:v", "0",
               "-spatial-aq", "1", "-temporal-aq", "1", "-pix_fmt", "yuv420p"],
-    QUALITY_FAST: ["-c:v", "h264_nvenc", "-preset", "p4", "-tune", "hq",
-                   "-rc", "vbr", "-cq", "25", "-b:v", "0", "-spatial-aq", "1",
+    QUALITY_FAST: ["-c:v", "h264_nvenc", "-preset", "p6", "-tune", "hq",
+                   "-rc", "vbr", "-cq", "17", "-b:v", "0", "-spatial-aq", "1",
                    "-pix_fmt", "yuv420p"],
-    DELIVERY: ["-c:v", "h264_nvenc", "-preset", "p4",
-               "-rc", "vbr", "-cq", "29", "-b:v", "0", "-spatial-aq", "1",
+    DELIVERY: ["-c:v", "h264_nvenc", "-preset", "p6",
+               "-rc", "vbr", "-cq", "17", "-b:v", "0", "-spatial-aq", "1",
                "-pix_fmt", "yuv420p"],
 }
 

@@ -27,6 +27,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
     filmTexture,
     audioVisualizer,
     focusBadge,
+    focusBadges,
     colorGrading,
     dataVisualization,
     brollCutaways,
@@ -155,6 +156,7 @@ export const ShortVideo: React.FC<Record<string, unknown>> = (rawProps: Record<s
 
       {/* Layer 5: Floor 3 Minimalist Focus Topic Badge (optional) */}
       {focusBadge && <FocusBadge config={focusBadge} />}
+      {focusBadges?.map((fb, i) => <FocusBadge key={i} config={fb} />)}
 
       {/* Layer 6: Viral Hook Overlay Headline (Standard Foreground if no mask) */}
       {!maskUrl && hook && <HookOverlay config={hook} />}

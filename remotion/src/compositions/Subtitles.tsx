@@ -68,13 +68,14 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
     }));
   }, [captions]);
 
-  // 2. Generate punchy short pages (2-4 words max like OpusClip/CapCut)
+  // 2. We no longer rely strictly on character counts for wrapping.
+  // We feed the phrase into the kit, but rely on CSS max-width and wrapping for the bounds.
   const { pages } = useMemo(() => {
     const res = captionsFromWords({ words, timeUnit: "milliseconds" });
     return createCaptionPages({
       captions: res.captions,
-      maxCharsPerPage: 22,
-      breakOnPunctuation: true,
+      maxCharsPerPage: 25, // Forces wrapping to 2 lines for typical 50-char phrases
+      breakOnPunctuation: false, // We rely on our python pre-processing phrase groupings
       minWordsPerPage: 1,
     });
   }, [words]);
@@ -102,7 +103,7 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
     activeColor: style.highlightColor,
     pillColor: style.bgColor,
     position: (position === "top" ? "top" : "bottom") as any,
-    edgeOffset: position === "top" ? 0.14 : (position === "middle" ? 0.45 : 0.15), // Dynamic offset
+    edgeOffset: position === "top" ? 0.14 : (position === "middle" ? 0.45 : 0.25), // Push 25% up from bottom to clear UI
   };
 
   // 5. Setup Professional Studio Typography Rules & Multi-Color Semantics
@@ -168,9 +169,23 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
         paintOrder: "stroke fill",
         WebkitTextStroke: style.borderWidth > 0 ? `${style.borderWidth}px ${style.borderColor}` : undefined,
         letterSpacing: "-0.02em",
-        lineHeight: 1.05,
+        lineHeight: 1.15,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "0 80px", // Strict safe margins on left/right to prevent edge clipping
       }}
     >
+      <div style={{
+        maxWidth: "920px", // Stricter width for mobile UI safe zones
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        flexWrap: "wrap",
+        textAlign: "center" as const,
+        whiteSpace: "normal",
+        wordWrap: "break-word",
+      }}>
       <CaptionTrack pages={pages}>
         {(page: any) => {
           switch (style.animation) {
@@ -191,6 +206,7 @@ const KitSubtitles: React.FC<SubtitlesProps> = ({ config }) => {
           }
         }}
       </CaptionTrack>
+      </div>
     </AbsoluteFill>
   );
 };

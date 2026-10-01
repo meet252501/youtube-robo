@@ -121,6 +121,8 @@ export interface AudioVisualizerConfig {
   width?: number;
 }
 
+export type CardPosition = "center-left" | "center-right" | "lower-left" | "lower-right" | "center";
+
 // --- Floor 3: Focus Topic Badge config ---
 export interface FocusBadgeConfig {
   enabled?: boolean;
@@ -128,8 +130,10 @@ export interface FocusBadgeConfig {
   category?: "insight" | "metric" | "principle" | "alert" | "custom";
   accentColor?: string;
   position?: "top-center" | "top-left" | "top-right";
+  cardPosition?: CardPosition;
   startMs?: number;
   durationMs?: number;
+  variant?: "badge" | "card";
 }
 
 // --- Main composition props ---
@@ -148,6 +152,7 @@ export interface ShortVideoProps {
   filmTexture?: FilmTextureConfig | null;
   audioVisualizer?: AudioVisualizerConfig | null;
   focusBadge?: FocusBadgeConfig | null;
+  focusBadges?: FocusBadgeConfig[] | null;
   colorGrading?: ColorGradingConfig | null;
   dataVisualization?: {
     hasMetrics: boolean;
@@ -266,8 +271,10 @@ export const focusBadgeConfigSchema = z.object({
   category: z.enum(["insight", "metric", "principle", "alert", "custom"]).optional(),
   accentColor: z.string().optional(),
   position: z.enum(["top-center", "top-left", "top-right"]).optional(),
+  cardPosition: z.enum(["center-left", "center-right", "lower-left", "lower-right", "center"]).optional(),
   startMs: z.number().optional(),
   durationMs: z.number().optional(),
+  variant: z.enum(["badge", "card"]).optional(),
 });
 
 export const ShortVideoSchema = z.object({
@@ -285,6 +292,13 @@ export const ShortVideoSchema = z.object({
   filmTexture: filmTextureConfigSchema.nullable().optional(),
   audioVisualizer: audioVisualizerConfigSchema.nullable().optional(),
   focusBadge: focusBadgeConfigSchema.nullable().optional(),
+  focusBadges: z.array(focusBadgeConfigSchema).nullable().optional(),
+  colorGrading: z.object({
+    enabled: z.boolean().optional(),
+    style: z.string().optional(),
+    hdrBloom: z.boolean().optional(),
+    intensity: z.number().optional(),
+  }).nullable().optional(),
   dataVisualization: z.object({
     hasMetrics: z.boolean(),
     metricValue: z.string(),

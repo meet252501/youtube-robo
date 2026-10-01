@@ -23,7 +23,7 @@ import os
 
 import numpy as np
 
-ENABLED = os.environ.get("PUNCH_IN", "0") == "1"
+ENABLED = False
 
 # Peak zoom. 1.12 crops 11% off each dimension: visible as intent, still short
 # of cutting into a head framed by the TRACK crop.

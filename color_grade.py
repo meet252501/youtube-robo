@@ -478,16 +478,12 @@ def apply_color_grade(
             "format=yuv420p",
         ])
 
-    # Apply 3D LUT
-    # Use interp=trilinear for smooth color transitions (prevents banding)
-    lut_path_escaped = lut_path.replace("\\", "/").replace(":", "\\:")
-    filters.append(f"lut3d=file='{lut_path_escaped}':interp=trilinear")
-
-    # If intensity < 1.0, blend with original using split/overlay
-    # For simplicity, apply at full intensity (the LUTs are already tuned to be subtle)
-    if intensity < 1.0:
-        # We'll use the LUT at full strength but the transforms themselves are subtle
-        print(f"[COLOR GRADE] Note: Intensity {intensity} — LUTs are already calibrated for subtlety")
+    # 1. Very subtle denoise to clean up shadows without looking plastic (luma=1.5, chroma=1.5)
+    filters.append("hqdn3d=1.5:1.5:2:2")
+    
+    # 2. No LUT applied to preserve original colorimetry (just standardizing to yuv420p)
+    # 3. Pull down highlights slightly (gamma 1.05 brightens midtones, contrast 0.98 softens whites)
+    filters.append("eq=gamma=1.0:contrast=0.98:brightness=-0.01:saturation=1.0")
 
     filter_str = ",".join(filters)
 
@@ -500,6 +496,7 @@ def apply_color_grade(
         "-vf", filter_str,
         "-c:v", "libx264", "-crf", "18", "-preset", "fast",
         "-pix_fmt", "yuv420p", "-g", "30",
+        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv",
         "-c:a", "copy",  # Pass through audio unchanged
         output_video,
     ]

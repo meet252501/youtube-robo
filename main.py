@@ -156,7 +156,7 @@ class SmoothedCameraman:
         # calmer and 23 are unchanged — but 7 get BUSIER, up to 59 -> 108px/s,
         # because committing later can leave the camera further to travel. Net
         # strongly positive, not universally so.
-        self.jump_confirm_frames = 3 # Fast response time
+        self.jump_confirm_frames = 5 # Faster, cinematic response
         self._pending_target = None
         self._pending_count = 0
         self._snap_pending = False
@@ -223,20 +223,21 @@ class SmoothedCameraman:
             # SIMPLIFIED LOGIC:
             # 1. Is the target outside the safe zone?
             if abs(diff) > self.safe_zone_radius:
-                # 2. If yes, move towards it slowly (Linear Speed)
-                # Determine direction
+                # CINEMATIC PROPORTIONAL PANNING (EMA)
+                # Instead of robotic 1px/frame, move proportionally to distance.
+                # Creates a natural "ease-out" deceleration.
+                easing_factor = 0.08
+                
+                # Minimum speed to prevent infinitely slow creeping
+                min_speed = 1.5 
+                
+                raw_speed = abs(diff) * easing_factor
+                speed = max(min_speed, raw_speed)
+                
                 direction = 1 if diff > 0 else -1
-                
-                # Speed: 2 pixels per frame (Slow pan)
-                # If the distance is HUGE (scene change or fast movement), speed up slightly
-                if abs(diff) > self.crop_width * 0.5:
-                    speed = 15.0 # Fast re-frame
-                else:
-                    speed = 3.0  # Slow, steady pan
-                
                 self.current_center_x += direction * speed
                 
-                # Check if we overshot (prevent oscillation)
+                # Prevent oscillation by snapping if we overshoot
                 new_diff = self.target_center_x - self.current_center_x
                 if (direction == 1 and new_diff < 0) or (direction == -1 and new_diff > 0):
                     self.current_center_x = self.target_center_x

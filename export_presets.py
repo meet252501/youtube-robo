@@ -9,22 +9,32 @@ def generate_platform_exports(video_path: str, output_dir: str = "output"):
     """
     print(f"[EXPORT] Generating platform presets for {video_path}...")
     
+    os.makedirs(output_dir, exist_ok=True)
     basename = os.path.splitext(os.path.basename(video_path))[0]
+    
+    # Enforce strict 30-frame GOP and precise SDR color tags across all platforms
+    base_cmd = [
+        "-c:v", "libx264", 
+        "-g", "30", "-keyint_min", "30", "-sc_threshold", "0",
+        "-pix_fmt", "yuv420p", "-color_range", "tv", 
+        "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709"
+    ]
     
     presets = {
         "tiktok": {
-            # TikTok likes faststart and specifically optimized bitrates
-            "cmd": ["-c:v", "libx264", "-b:v", "8M", "-maxrate", "8M", "-bufsize", "16M", "-movflags", "+faststart", "-c:a", "aac", "-b:a", "128k"],
+            # TikTok compression is decent, 8M is sufficient
+            "cmd": base_cmd + ["-b:v", "8M", "-maxrate", "8M", "-bufsize", "16M", "-movflags", "+faststart", "-c:a", "aac", "-b:a", "128k"],
             "ext": "_tiktok.mp4"
         },
         "youtube_shorts": {
-            # Shorts allows higher bitrate but strictly prefers 4:2:0 YUV
-            "cmd": ["-c:v", "libx264", "-crf", "18", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k"],
+            # YouTube Shorts allows high bitrates and has good transcoder
+            "cmd": base_cmd + ["-b:v", "10M", "-maxrate", "10M", "-bufsize", "20M", "-c:a", "aac", "-b:a", "192k"],
             "ext": "_shorts.mp4"
         },
         "instagram_reels": {
-            # Reels strictly requires H.264 High Profile and AAC
-            "cmd": ["-c:v", "libx264", "-profile:v", "high", "-level", "4.2", "-crf", "21", "-c:a", "aac", "-b:a", "256k"],
+            # Reels ingest compression is extremely aggressive. We provide the highest possible 
+            # bitrate here (12 Mbps) to give Instagram's engine maximum headroom to avoid artifacts.
+            "cmd": base_cmd + ["-profile:v", "high", "-level", "4.2", "-b:v", "12M", "-maxrate", "12M", "-bufsize", "24M", "-c:a", "aac", "-b:a", "256k"],
             "ext": "_reels.mp4"
         }
     }

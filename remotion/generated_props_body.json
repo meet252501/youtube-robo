@@ -1,0 +1,481 @@
+{
+  "videoUrl": "/test_graded.mp4",
+  "maskUrl": "/test_mask.mp4",
+  "durationInFrames": 934,
+  "fps": 30.0,
+  "width": 1080,
+  "height": 1920,
+  "subtitles": {
+    "captions": [
+      {
+        "text": "Can",
+        "startMs": 0,
+        "endMs": 200
+      },
+      {
+        "text": "you",
+        "startMs": 200,
+        "endMs": 300
+      },
+      {
+        "text": "just",
+        "startMs": 300,
+        "endMs": 480
+      },
+      {
+        "text": "speak",
+        "startMs": 480,
+        "endMs": 680
+      },
+      {
+        "text": "to",
+        "startMs": 680,
+        "endMs": 920
+      },
+      {
+        "text": "what",
+        "startMs": 920,
+        "endMs": 1240
+      },
+      {
+        "text": "it",
+        "startMs": 1240,
+        "endMs": 1360
+      },
+      {
+        "text": "takes",
+        "startMs": 1360,
+        "endMs": 1620
+      },
+      {
+        "text": "for",
+        "startMs": 1620,
+        "endMs": 2060
+      },
+      {
+        "text": "a",
+        "startMs": 2060,
+        "endMs": 2160
+      },
+      {
+        "text": "great",
+        "startMs": 2160,
+        "endMs": 2260
+      },
+      {
+        "text": "engineering",
+        "startMs": 2260,
+        "endMs": 2620
+      },
+      {
+        "text": "team",
+        "startMs": 2620,
+        "endMs": 2960
+      },
+      {
+        "text": "For",
+        "startMs": 3240,
+        "endMs": 3300
+      },
+      {
+        "text": "you",
+        "startMs": 3300,
+        "endMs": 3500
+      },
+      {
+        "text": "what",
+        "startMs": 3880,
+        "endMs": 3960
+      },
+      {
+        "text": "I",
+        "startMs": 3960,
+        "endMs": 4080
+      },
+      {
+        "text": "saw",
+        "startMs": 4080,
+        "endMs": 4400
+      },
+      {
+        "text": "in",
+        "startMs": 4400,
+        "endMs": 4880
+      },
+      {
+        "text": "Memphis",
+        "startMs": 4880,
+        "endMs": 5320
+      },
+      {
+        "text": "the",
+        "startMs": 5600,
+        "endMs": 5660
+      },
+      {
+        "text": "supercomputer",
+        "startMs": 5660,
+        "endMs": 5940
+      },
+      {
+        "text": "cluster",
+        "startMs": 5940,
+        "endMs": 6580
+      },
+      {
+        "text": "is",
+        "startMs": 7000,
+        "endMs": 7300
+      },
+      {
+        "text": "just",
+        "startMs": 7300,
+        "endMs": 7520
+      },
+      {
+        "text": "this",
+        "startMs": 7520,
+        "endMs": 7840
+      },
+      {
+        "text": "intense",
+        "startMs": 7840,
+        "endMs": 8380
+      },
+      {
+        "text": "drive",
+        "startMs": 8380,
+        "endMs": 8880
+      },
+      {
+        "text": "towards",
+        "startMs": 8880,
+        "endMs": 9200
+      },
+      {
+        "text": "simplifying",
+        "startMs": 9200,
+        "endMs": 9960
+      },
+      {
+        "text": "the",
+        "startMs": 9960,
+        "endMs": 10580
+      },
+      {
+        "text": "process",
+        "startMs": 10580,
+        "endMs": 10840
+      },
+      {
+        "text": "understanding",
+        "startMs": 10980,
+        "endMs": 11320
+      },
+      {
+        "text": "the",
+        "startMs": 11320,
+        "endMs": 11460
+      },
+      {
+        "text": "process",
+        "startMs": 11460,
+        "endMs": 11680
+      },
+      {
+        "text": "constantly",
+        "startMs": 11800,
+        "endMs": 12080
+      },
+      {
+        "text": "improving",
+        "startMs": 12080,
+        "endMs": 12420
+      },
+      {
+        "text": "it",
+        "startMs": 12420,
+        "endMs": 12700
+      },
+      {
+        "text": "constantly",
+        "startMs": 12980,
+        "endMs": 13240
+      },
+      {
+        "text": "iterating",
+        "startMs": 13240,
+        "endMs": 13660
+      },
+      {
+        "text": "it",
+        "startMs": 13660,
+        "endMs": 13920
+      },
+      {
+        "text": "Well",
+        "startMs": 14460,
+        "endMs": 14560
+      },
+      {
+        "text": "it's",
+        "startMs": 15660,
+        "endMs": 16700
+      },
+      {
+        "text": "easy",
+        "startMs": 16700,
+        "endMs": 16860
+      },
+      {
+        "text": "to",
+        "startMs": 16860,
+        "endMs": 17000
+      },
+      {
+        "text": "say",
+        "startMs": 17000,
+        "endMs": 17160
+      },
+      {
+        "text": "simplify",
+        "startMs": 17160,
+        "endMs": 17520
+      },
+      {
+        "text": "It's",
+        "startMs": 18000,
+        "endMs": 18200
+      },
+      {
+        "text": "very",
+        "startMs": 18200,
+        "endMs": 18740
+      },
+      {
+        "text": "difficult",
+        "startMs": 18740,
+        "endMs": 18900
+      },
+      {
+        "text": "to",
+        "startMs": 18900,
+        "endMs": 19380
+      },
+      {
+        "text": "do",
+        "startMs": 19380,
+        "endMs": 19520
+      },
+      {
+        "text": "it",
+        "startMs": 19520,
+        "endMs": 19720
+      },
+      {
+        "text": "You",
+        "startMs": 20440,
+        "endMs": 20680
+      },
+      {
+        "text": "know",
+        "startMs": 20680,
+        "endMs": 20740
+      },
+      {
+        "text": "I",
+        "startMs": 20760,
+        "endMs": 20800
+      },
+      {
+        "text": "have",
+        "startMs": 20800,
+        "endMs": 20840
+      },
+      {
+        "text": "this",
+        "startMs": 20840,
+        "endMs": 20940
+      },
+      {
+        "text": "very",
+        "startMs": 20940,
+        "endMs": 21140
+      },
+      {
+        "text": "basic",
+        "startMs": 21140,
+        "endMs": 21920
+      },
+      {
+        "text": "first",
+        "startMs": 21920,
+        "endMs": 22140
+      },
+      {
+        "text": "principles",
+        "startMs": 22140,
+        "endMs": 23420
+      },
+      {
+        "text": "algorithm",
+        "startMs": 23420,
+        "endMs": 23800
+      },
+      {
+        "text": "that",
+        "startMs": 23800,
+        "endMs": 24280
+      },
+      {
+        "text": "I",
+        "startMs": 24280,
+        "endMs": 24420
+      },
+      {
+        "text": "run",
+        "startMs": 24420,
+        "endMs": 24820
+      },
+      {
+        "text": "kind",
+        "startMs": 24820,
+        "endMs": 25020
+      },
+      {
+        "text": "of",
+        "startMs": 25020,
+        "endMs": 25100
+      },
+      {
+        "text": "as",
+        "startMs": 25100,
+        "endMs": 25200
+      },
+      {
+        "text": "like",
+        "startMs": 25200,
+        "endMs": 25320
+      },
+      {
+        "text": "a",
+        "startMs": 25320,
+        "endMs": 25400
+      },
+      {
+        "text": "mantra",
+        "startMs": 25400,
+        "endMs": 25640
+      },
+      {
+        "text": "which",
+        "startMs": 25880,
+        "endMs": 26280
+      },
+      {
+        "text": "is",
+        "startMs": 26280,
+        "endMs": 26460
+      },
+      {
+        "text": "to",
+        "startMs": 26460,
+        "endMs": 26660
+      },
+      {
+        "text": "first",
+        "startMs": 26660,
+        "endMs": 27020
+      },
+      {
+        "text": "question",
+        "startMs": 27020,
+        "endMs": 27340
+      },
+      {
+        "text": "the",
+        "startMs": 27340,
+        "endMs": 27520
+      },
+      {
+        "text": "requirements",
+        "startMs": 27520,
+        "endMs": 27960
+      },
+      {
+        "text": "to",
+        "startMs": 27960,
+        "endMs": 28140
+      },
+      {
+        "text": "make",
+        "startMs": 28140,
+        "endMs": 28240
+      },
+      {
+        "text": "the",
+        "startMs": 28240,
+        "endMs": 28340
+      },
+      {
+        "text": "requirements",
+        "startMs": 28340,
+        "endMs": 28580
+      },
+      {
+        "text": "less",
+        "startMs": 28580,
+        "endMs": 29440
+      },
+      {
+        "text": "dumb",
+        "startMs": 29440,
+        "endMs": 29720
+      }
+    ],
+    "position": "bottom",
+    "style": {
+      "fontFamily": "editorial",
+      "fontSize": 68,
+      "animation": "kinetic-slam",
+      "primaryTextColor": "#FFFFFF",
+      "highlightColor": "#FFD700",
+      "semanticColors": {
+        "algorithm": "#00F0FF",
+        "truth": "#FFD700",
+        "secret": "#FFD700",
+        "never": "#FFD700",
+        "always": "#FFD700",
+        "know": "#FFD700",
+        "how": "#FFD700"
+      },
+      "outlinePx": 0
+    }
+  },
+  "hook": null,
+  "focusBadge": null,
+  "effects": {
+    "segments": []
+  },
+  "progressBar": {
+    "enabled": true,
+    "position": "top",
+    "height": 5,
+    "color": "#FFD700",
+    "backgroundColor": "rgba(0,0,0,0.30)",
+    "glow": true
+  },
+  "emojis": null,
+  "filmTexture": null,
+  "audioVisualizer": null,
+  "brollCutaways": [],
+  "dataVisualization": {
+    "hasMetrics": false,
+    "metricValue": "",
+    "metricLabel": "",
+    "chartType": "none",
+    "timestampStart": 0.0
+  },
+  "colorGrading": null,
+  "cameraMoves": []
+}

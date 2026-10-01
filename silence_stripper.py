@@ -77,7 +77,7 @@ def build_jumpcut_cmd(video_path: str, output_path: str, silences: list, duratio
         "ffmpeg", "-y", "-i", video_path,
         "-filter_complex", filter_complex,
         "-map", "[outv]", "-map", "[outa]",
-        "-c:v", "libx264", "-crf", "18", "-preset", "fast",
+        "-c:v", "libx264", "-crf", "10", "-preset", "slow",
         "-c:a", "aac", "-b:a", "192k",
         output_path
     ]

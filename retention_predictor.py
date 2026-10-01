@@ -3,19 +3,19 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
-def generate_retention_graph(director_plan_path: str, output_path: str):
+def generate_retention_graph(director_plan_path: str, output_path: str, duration_sec: float = 60.0):
     """
     Floor 14: Retention Graph Predictor.
     Simulates a YouTube Shorts retention graph based on pacing and hook strength.
     """
-    print(f"[RETENTION] Predicting retention graph -> {output_path}")
+    print(f"[RETENTION] Predicting retention graph -> {output_path} (Duration: {duration_sec:.1f}s)")
     
-    # Generate synthetic retention curve
-    # 0s: 100%, 3s: 85% (hook), then slow decay, bump at B-Roll
-    x = np.linspace(0, 60, 100)
+    # Generate synthetic retention curve matching real clip length
+    x = np.linspace(0, duration_sec, 100)
     
-    # Base exponential decay
-    y = 100 * np.exp(-0.015 * x)
+    # Base exponential decay scaled to duration
+    decay_rate = 0.8 / duration_sec
+    y = 100 * np.exp(-decay_rate * x)
     
     # Initial hook dropoff
     y = np.where(x < 3, 100 - (15 * (x/3)), y)

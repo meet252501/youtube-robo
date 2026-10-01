@@ -1,5 +1,6 @@
 {
   "videoUrl": "/test_reframe_only.mp4",
+  "maskUrl": "/test_mask.mp4",
   "durationInFrames": 1193,
   "fps": 23.976023976023978,
   "width": 1080,
@@ -940,13 +941,13 @@
         "fast": "#FFE600",
         "fasting": "#00F0FF",
         "young": "#00F0FF",
-        "protocols": "#FFD700",
-        "better": "#FFD700",
-        "lifespan": "#FFD700",
-        "details": "#FFD700",
-        "woman": "#FFD700",
-        "man": "#FFD700",
-        "rules": "#FFD700"
+        "live": "#FFD700",
+        "age": "#FFD700",
+        "body": "#FFD700",
+        "younger": "#FFD700",
+        "food": "#FFD700",
+        "life": "#FFD700",
+        "years": "#FFD700"
       },
       "outlinePx": 0
     }
@@ -972,20 +973,15 @@
   "emojis": null,
   "filmTexture": {
     "enabled": true,
-    "grainOpacity": 0.02,
-    "vignetteIntensity": 0.3
+    "grainOpacity": 0.04,
+    "vignetteIntensity": 0.6
   },
   "audioVisualizer": null,
   "brollCutaways": [
     {
-      "timestampStart": 2.0,
+      "timestampStart": 5.0,
       "duration": 2.5,
-      "url": "https://image.pollinations.ai/prompt/cinematic%204k%20macro%20shot%20of%20vibrant%20green%20and%20purple%20healthy%20plant%20cells%20under%20a%20microscope%2C%20abstract%2C%20bioluminescent%2C%20scientific.?width=1080&height=1920&nologo=true"
-    },
-    {
-      "timestampStart": 14.0,
-      "duration": 2.5,
-      "url": "https://image.pollinations.ai/prompt/futuristic%20holographic%20display%20showing%20a%20human%20silhouette%20with%20various%20health%20metrics%20and%20bio-indicators%2C%20representing%20longevity%20and%20health%20optimization%2C%20vibrant%20blue%20and%20gold%20colors.?width=1080&height=1920&nologo=true"
+      "url": "https://image.pollinations.ai/prompt/cinematic%20dark%20moody%20shot%20of%20a%20glowing%20dna%20helix?width=1080&height=1920&nologo=true"
     }
   ]
 }

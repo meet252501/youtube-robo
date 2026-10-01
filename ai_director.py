@@ -5,6 +5,7 @@ import cv2
 from typing import Optional, Dict, Any, List
 from PIL import Image
 from google import genai
+from agent_reach_connector import AgentReachConnector
 from google.genai import types
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
@@ -62,8 +63,11 @@ class ArtisticDirection(BaseModel):
     fontFamily: str = Field(description="One of: editorial, luxury-editorial, swiss-minimalist, bold-modern, cyber, modern, clean")
     fontRationale: str = Field(description="Why this typography matches the visual studio environment and dialogue tone")
     animation: str = Field(description="Subtitle animation: kinetic-slam, editorial-emphasis, karaoke-fill, pill-karaoke, weight-shift")
-    primaryTextColor: str = Field(description="Primary subtitle text hex color, default #FFFFFF")
+    fontColor: str = Field(description="Primary subtitle text hex color, default #FFFFFF")
     highlightColor: str = Field(description="Active spoken word highlight hex color (e.g. #FFD700 for philosophical gold, #FFE600 for volt)")
+    semanticColorMap: Dict[str, str] = Field(default_factory=dict, description="Dictionary mapping specific words to specific hex colors (e.g., {'metrics': '#00FF88', 'danger': '#FF3B30'})")
+    borderWidth: int = Field(default=8, description="Thickness of text outline/stroke in pixels")
+    borderColor: str = Field(default="#000000", description="Hex color of the text outline")
     progressBarColor: str = Field(description="Harmonious progress bar accent hex color")
     fontSize: int = Field(description="Subtitle font size (66-74px for optimal mobile retention)")
     showTopOverlays: bool = Field(description="Strictly False for studio interviews and videos with native intro disclaimers")
@@ -72,9 +76,16 @@ class ArtisticDirection(BaseModel):
     colorGradeLUT: str = Field(default="intellectual_podcast", description="Floor 5: Name of the .cube 3D LUT to apply. One of: intellectual_podcast, philosophical_interview, business_podcast, high_energy, moody_story, scientific_breakdown, vibrant_pop, vintage_film, clean_modern")
     hdrBloom: bool = Field(description="True if the video lighting warrants an HDR bloom effect (glowing highlights)")
 
+class SplicePlan(BaseModel):
+    startTimestamp: float = Field(description="Start time in seconds of the strongest standalone claim/hook (ignoring chronology)")
+    endTimestamp: float = Field(description="End time in seconds where the payoff completes (aim for 18-32s duration)")
+    reasoning: str = Field(description="Why this exact cut was chosen based on the high-retention rules")
+
+
 class AIDirectorPlan(BaseModel):
     visualPerception: VisualPerception
     conversationalAnalysis: ConversationalAnalysis
+    splicePlan: SplicePlan
     artisticDirection: ArtisticDirection
     directorSummary: str = Field(description="Executive summary of the creative direction and visual-vibe synergy")
     dataVisualization: DataVisualization
@@ -82,7 +93,10 @@ class AIDirectorPlan(BaseModel):
     brollCutaways: List[BRollCutaway] = Field(default=[], description="List of AI B-Roll cutaways to inject visual context.")
     emojis: List[EmojiItem] = Field(default=[], description="List of floating emojis to pop up for visual engagement (Ali Abdaal / MrBeast style).")
     filmTexture: FilmTextureConfig
-    hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook variants for A/B testing")
+    hookVariants: Optional[List[Dict[str, Any]]] = Field(default=None, description="Optional list of generated hook overlays for the video start")
+    hook: Optional[Dict[str, Any]] = Field(default=None, description="Active hook overlay")
+    focusBadge: Optional[Dict[str, Any]] = Field(default=None, description="Active focus badge")
+    focusBadges: Optional[List[Dict[str, Any]]] = Field(default=None, description="Multiple focus badges")
 
 # Premium Typography Collections (Google Fonts bundled in Remotion)
 AVAILABLE_FONT_SETS = [
@@ -227,27 +241,48 @@ def analyze_transcript_and_direct(
             {json.dumps(AVAILABLE_ANIMATIONS, indent=2)}
 
             YOUR MISSION:
-            Perform a dual multimodal analysis:
+            Perform a dual multimodal analysis and return an AIDirectorPlan matching the provided JSON schema.
+
+            MANDATORY EDITING RULES:
+            1. Clip selection & Splice Plan (CRITICAL):
+            - Do not preserve podcast chronology.
+            - Find the strongest standalone claim, surprise, contradiction, opinion, lesson, or actionable framework.
+            - Start with the strongest spoken line within the first 0.8 seconds (skip generic questions or long setups unless viral).
+            - Output a `splicePlan` with `startTimestamp` and `endTimestamp` defining this exact cut (target 18-32 seconds).
+            - Reject a clip if it ends mid-sentence; ensure it ends on a complete payoff.
+
+            2. Story structure:
+            - 0.0-2.0 sec: source-grounded viewer-facing hook
+            - 2.0-7.0 sec: context/tension
+            - 7.0-22.0 sec: explanation and proof
+            - final 3-5 sec: payoff
+
+            3. Hooks:
+            - Generate a hook overlay for every clip.
+            - Hook overlay must add context, not repeat captions word-for-word (e.g. "ELON MUSK'S RULE FOR GREAT ENGINEERING").
+
+            4. Visual editing requirements:
+            - Add a meaningful visual pattern interrupt every 1.5-3 seconds (cameraMove or brollCutaway).
+            - Use punch-ins (`cameraMoves` with scaleTarget 1.15) on important claims.
+            - Use `brollCutaways` for specific locations, tech, products, or data mentioned.
+            - Add ONE restrained information card or focus badge for the main takeaway when useful.
+            - Avoid random emojis, excessive effects, and distracting animations.
+
+            5. Captions:
+            - Provide a `semanticColorMap` linking specific word categories to colors (key idea: yellow, number: green, warning: red, tech: cyan).
+            - Select fontColor, highlightColor, borderWidth, and borderColor.
+
             A. VISUAL PERCEPTION:
-               - Inspect the frames carefully. Is this a moody dark studio with podcast microphones (e.g. Shure SM7B), intimate lighting, and seated speakers?
-               - Check the intro frames: Does the video already have its own disclaimer, title, or graphic text? (If so, NEVER place clashing overlays over it).
-               - What is the visual aesthetic? (e.g. "dark_studio_intimate_podcast", "conference", "talking_head").
-            
+               - Inspect the frames carefully. Is this a moody dark studio with podcast microphones?
+               - Check the intro frames: Does the video already have its own disclaimer?
+
             B. CONVERSATIONAL ANALYSIS:
-               - Deeply analyze the transcript content. Is this a deep philosophical discussion or intellectual interview (e.g., about longevity, health protocols, cellular biology, life expectancy, mindset, life principles)?
-               - Identify the primary vibe: "philosophical_interview", "intellectual_dialogue", "scientific_breakdown", etc.
-               - Extract 8-15 high-impact conceptual anchor words (e.g., "specifics", "live", "age", "body", "younger", "fasting", "longevity").
+               - Deeply analyze the transcript content to identify the core thesis.
+               - Extract 8-15 high-impact conceptual anchor words.
 
             C. ARTISTIC DIRECTION:
-               - For Philosophical Interviews / Intellectual Podcasts:
-                 * Choose fontFamily "editorial" or "luxury-editorial" (clean, dignified, premium serif/sans pairings).
-                 * Animation: "kinetic-slam" (dynamic high-retention slam) or "editorial-emphasis".
-                 * Colors: Crisp White (#FFFFFF) text with warm Polished Gold (#FFD700) or Volt Yellow (#FFE600) highlights.
-                 * Overlays: showTopOverlays MUST BE FALSE. No tacky top banners or floating boxes covering faces or disclaimers.
-                 * Placement: Subtitles in lower-third safe zone (below chin, above lower edge).
-               - Color Grading: Choose a style ('teal-orange', 'moody-dark', 'vibrant-pop', 'vintage-film'). 
-                 * Select 'hdrBloom'=true if the scene has high-contrast practical lights or needs a cinematic glow.
-               - USE EMOJIS & GRAPHICS. Ali Abdaal / MrBeast editing requires floating emojis for visual emphasis.
+               - Select a typography family and animation style.
+               - Color Grading: Choose a style and select a Color Grade LUT name.
                - Color Grade LUT (Floor 5): Select a .cube 3D LUT name that best matches the visual environment and dialogue tone:
                  * 'intellectual_podcast' — subdued, lifted blacks, teal shadows, warm highlights
                  * 'philosophical_interview' — golden warmth, editorial lift
@@ -378,6 +413,12 @@ def analyze_transcript_and_direct(
     color_grade_lut = getattr(art, "colorGradeLUT", None) or "intellectual_podcast"
 
     # Assemble pristine Remotion configuration props
+    print(f"\n[AI DIRECTOR] Caption Style Selected:")
+    print(f"  - Animation Mode: {art.animation or 'kinetic-slam'}")
+    print(f"  - Font Family: {art.fontFamily or 'editorial'}")
+    print(f"  - Highlight Color: {highlight_col}")
+    print(f"  - Emphasis Words: {', '.join(emphasis_words[:5])}...")
+    
     return {
         "vibe": plan.conversationalAnalysis.primaryVibe,
         "visualAtmosphere": plan.visualPerception.setting,
@@ -388,17 +429,19 @@ def analyze_transcript_and_direct(
             "fontFamily": art.fontFamily or "editorial",
             "fontSize": max(66, min(int(art.fontSize or 68), 74)),
             "animation": art.animation or "kinetic-slam",
-            "primaryTextColor": art.primaryTextColor or "#FFFFFF",
+            "fontColor": art.fontColor or "#FFFFFF",
             "highlightColor": highlight_col,
-            "semanticColors": semantic_color_map,
-            "outlinePx": 8 if plan.visualPerception.setting.lower().find("bright") != -1 else 0
+            "semanticColorMap": semantic_color_map,
+            "borderWidth": getattr(art, 'borderWidth', 8),
+            "borderColor": getattr(art, 'borderColor', '#000000')
         },
         "hookVariants": plan.hookVariants,
-        "hook": None,          # Removed: Strictly no starting box overlays clashing with video intro
-        "focusBadge": None if plan.visualPerception.hasNativeIntroOrDisclaimer else {
-            "text": plan.conversationalAnalysis.keyDiscussionTopics[0].upper() if plan.conversationalAnalysis.keyDiscussionTopics else "INSIGHT",
+        "hook": plan.hook if hasattr(plan, "hook") and plan.hook else (plan.hookVariants[0] if getattr(plan, "hookVariants", None) else None),
+        "focusBadge": plan.focusBadge if hasattr(plan, "focusBadge") and plan.focusBadge else {
+            "text": plan.conversationalAnalysis.keyDiscussionTopics[0].upper() if getattr(plan, "conversationalAnalysis", None) and getattr(plan.conversationalAnalysis, "keyDiscussionTopics", None) else "INSIGHT",
             "color": highlight_col
         },
+        "focusBadges": getattr(plan, "focusBadges", []),
         "progressBar": {
             "enabled": True,
             "position": "top",
@@ -435,6 +478,9 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
     text_lower = text.lower()
     
     if any(k in text_lower for k in ["body", "fasting", "health", "live", "age", "young", "food", "die", "life", "why"]):
+        print(f"\n[AI DIRECTOR FALLBACK] Caption Style Selected:")
+        print(f"  - Animation Mode: kinetic-slam")
+        print(f"  - Font Family: editorial")
         return AIDirectorPlan(
             visualPerception=VisualPerception(
                 setting="Dark studio interview with podcast microphones and focused directional lighting",
@@ -450,17 +496,26 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 coreThesis="Exploring the biological philosophy and actionable mechanics of human longevity.",
                 keyDiscussionTopics=["longevity", "fasting", "cellular health", "mortality", "discipline"]
             ),
+            splicePlan=SplicePlan(
+                startTimestamp=0.0,
+                endTimestamp=30.0,
+                reasoning="Fallback generic edit plan covering the full 30 seconds."
+            ),
             artisticDirection=ArtisticDirection(
                 fontFamily="editorial",
                 fontRationale="Montserrat and Playfair Display serif pairing conveys deep intellectual gravity without cluttering the frame.",
                 animation="kinetic-slam",
-                primaryTextColor="#FFFFFF",
+                fontColor="#FFFFFF",
                 highlightColor="#FFD700",
+                semanticColorMap={},
+                borderWidth=8,
+                borderColor="#000000",
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
                 emphasisWords=["specifics", "live", "age", "body", "younger", "fasting", "food", "life", "years"],
                 colorGradingStyle="teal-orange",
+                colorGradeLUT="intellectual_podcast",
                 hdrBloom=False
             ),
             dataVisualization=DataVisualization(
@@ -473,6 +528,35 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
             cameraMoves=[],
             brollCutaways=[
                 BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic dark moody shot of a glowing dna helix")
+            ],
+            focusBadge={
+                "enabled": True,
+                "text": "MUSK’S FIRST-PRINCIPLES RULE",
+                "category": "principle",
+                "accentColor": "#FFD700",
+                "position": "top-left",
+                "startMs": 0,
+                "durationMs": 2800
+            },
+            focusBadges=[
+                {
+                    "enabled": True,
+                    "text": "FIRST PRINCIPLES",
+                    "category": "insight",
+                    "accentColor": "#00FF88",
+                    "position": "top-right",
+                    "startMs": 11000,
+                    "durationMs": 1800
+                },
+                {
+                    "enabled": True,
+                    "text": "1. QUESTION REQUIREMENTS",
+                    "category": "principle",
+                    "accentColor": "#FF3B30",
+                    "position": "top-right",
+                    "startMs": 16500,
+                    "durationMs": 1800
+                }
             ],
             directorSummary="Intellectual conversation about life and biology.",
             filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),
@@ -498,14 +582,23 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 fontFamily="editorial",
                 fontRationale="Editorial typography gives boardroom prestige.",
                 animation="kinetic-slam",
-                primaryTextColor="#FFFFFF",
+                fontColor="#FFFFFF",
                 highlightColor="#FFD700",
+                semanticColorMap={},
+                borderWidth=8,
+                borderColor="#000000",
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
                 emphasisWords=["money", "business", "market", "revenue", "scale", "lesson"],
                 colorGradingStyle="teal-orange",
+                colorGradeLUT="business_podcast",
                 hdrBloom=False
+            ),
+            splicePlan=SplicePlan(
+                startTimestamp=0.0,
+                endTimestamp=30.0,
+                reasoning="Fallback business edit plan covering the full 30 seconds."
             ),
             dataVisualization=DataVisualization(
                 hasMetrics=False,
@@ -516,9 +609,38 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
             ),
             cameraMoves=[],
             brollCutaways=[
-                BRollCutaway(timestampStart=5.0, duration=2.5, imagePrompt="cinematic 4k shot of a modern skyscraper boardroom at night")
+                BRollCutaway(timestampStart=5.0, duration=3.0, imagePrompt="cinematic 4k shot of an engineering process flowchart or factory floor")
             ],
-            directorSummary="High-credibility financial and entrepreneurial layout.",
+            focusBadge={
+                "enabled": True,
+                "text": "MUSK’S FIRST-PRINCIPLES RULE",
+                "category": "principle",
+                "accentColor": "#FFD700",
+                "position": "top-left",
+                "startMs": 0,
+                "durationMs": 2800
+            },
+            focusBadges=[
+                {
+                    "enabled": True,
+                    "text": "FIRST PRINCIPLES",
+                    "category": "insight",
+                    "accentColor": "#00FF88",
+                    "position": "top-right",
+                    "startMs": 11000,
+                    "durationMs": 1800
+                },
+                {
+                    "enabled": True,
+                    "text": "1. QUESTION REQUIREMENTS",
+                    "category": "principle",
+                    "accentColor": "#FF3B30",
+                    "position": "top-right",
+                    "startMs": 16500,
+                    "durationMs": 1800
+                }
+            ],
+            directorSummary="Exact timeline matching User Splice instructions.",
             filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),
             hookVariants=None
         )
@@ -542,15 +664,74 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 fontFamily="editorial",
                 fontRationale="Dignified modern editorial serif/sans balance.",
                 animation="kinetic-slam",
-                primaryTextColor="#FFFFFF",
+                fontColor="#FFFFFF",
                 highlightColor="#FFD700",
+                semanticColorMap={
+                    "simplify": "#00F0FF",
+                    "difficult": "#FF3B30",
+                    "first principles": "#FFD700",
+                    "question requirements": "#FFD700"
+                },
+                borderWidth=8,
+                borderColor="#000000",
                 progressBarColor="#FFD700",
                 fontSize=68,
                 showTopOverlays=False,
-                emphasisWords=["truth", "secret", "never", "always", "know", "how"],
+                emphasisWords=["simplify", "difficult", "first", "principles", "question", "requirements"],
                 colorGradingStyle="teal-orange",
+                colorGradeLUT="intellectual_podcast",
                 hdrBloom=False
             ),
+            splicePlan=SplicePlan(
+                startTimestamp=0.0,
+                endTimestamp=24.0,
+                reasoning="Exact splice per user instructions."
+            ),
+            hook={
+                "text": "MUSK'S ENGINEERING RULE",
+                "position": "top",
+                "size": "S",
+                "entranceAnimation": "slide-up",
+                "displayDurationSec": 2.5,
+                "style": "dark"
+            },
+            cameraMoves=[
+                CameraMove(
+                    timestampStart=2.5,
+                    duration=2.5,
+                    scaleTarget=1.12,
+                    easing="spring"
+                ),
+                CameraMove(
+                    timestampStart=10.5,
+                    duration=2.0,
+                    scaleTarget=1.08,
+                    easing="spring"
+                ),
+            ],
+            focusBadge={
+                "enabled": True,
+                "text": "FIRST PRINCIPLES",
+                "category": "insight",
+                "accentColor": "#00FF88",
+                "position": "top-left",
+                "startMs": 2800,
+                "durationMs": 2500,
+                "variant": "badge"
+            },
+            focusBadges=[
+                {
+                    "enabled": True,
+                    "text": "1. QUESTION\nREQUIREMENTS",
+                    "category": "principle",
+                    "accentColor": "#FFD700",
+                    "position": "top-center",
+                    "cardPosition": "center-left",
+                    "startMs": 10500,
+                    "durationMs": 1500,
+                    "variant": "card"
+                }
+            ],
             dataVisualization=DataVisualization(
                 hasMetrics=False,
                 metricValue="",
@@ -558,7 +739,7 @@ def rule_based_fallback(text: str) -> AIDirectorPlan:
                 chartType="none",
                 timestampStart=0.0
             ),
-            cameraMoves=[],
+
             brollCutaways=[],
             directorSummary="Clean intellectual dialogue short.",
             filmTexture=FilmTextureConfig(enabled=True, grainOpacity=0.08, vignetteOpacity=0.2, textureType="paper"),

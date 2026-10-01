@@ -1,0 +1,332 @@
+{
+  "videoUrl": "/video_7d0c407e-35ea-45e5-ba5f-e6dc34aedc82.mp4",
+  "durationInFrames": 472,
+  "fps": 30.0,
+  "width": 1080,
+  "height": 1920,
+  "subtitles": {
+    "captions": [
+      {
+        "text": "I",
+        "startMs": 0,
+        "endMs": 360
+      },
+      {
+        "text": "think",
+        "startMs": 360,
+        "endMs": 440
+      },
+      {
+        "text": "Shakespeare",
+        "startMs": 440,
+        "endMs": 780
+      },
+      {
+        "text": "had",
+        "startMs": 780,
+        "endMs": 1180
+      },
+      {
+        "text": "a",
+        "startMs": 1180,
+        "endMs": 1320
+      },
+      {
+        "text": "thing",
+        "startMs": 1320,
+        "endMs": 1500
+      },
+      {
+        "text": "about",
+        "startMs": 1500,
+        "endMs": 1720
+      },
+      {
+        "text": "roses",
+        "startMs": 1720,
+        "endMs": 2020
+      },
+      {
+        "text": "and",
+        "startMs": 2020,
+        "endMs": 2260
+      },
+      {
+        "text": "stuff",
+        "startMs": 2260,
+        "endMs": 2460
+      },
+      {
+        "text": "whatever",
+        "startMs": 2460,
+        "endMs": 2760
+      },
+      {
+        "text": "he",
+        "startMs": 2760,
+        "endMs": 2960
+      },
+      {
+        "text": "said",
+        "startMs": 2960,
+        "endMs": 3140
+      },
+      {
+        "text": "rose",
+        "startMs": 3140,
+        "endMs": 3600
+      },
+      {
+        "text": "by",
+        "startMs": 3600,
+        "endMs": 3820
+      },
+      {
+        "text": "any",
+        "startMs": 3820,
+        "endMs": 3940
+      },
+      {
+        "text": "other",
+        "startMs": 3940,
+        "endMs": 4040
+      },
+      {
+        "text": "name.",
+        "startMs": 4040,
+        "endMs": 4280
+      },
+      {
+        "text": "It's",
+        "startMs": 4520,
+        "endMs": 4940
+      },
+      {
+        "text": "all",
+        "startMs": 4940,
+        "endMs": 5020
+      },
+      {
+        "text": "sweet",
+        "startMs": 5020,
+        "endMs": 5320
+      },
+      {
+        "text": "I",
+        "startMs": 6380,
+        "endMs": 6800
+      },
+      {
+        "text": "got",
+        "startMs": 6800,
+        "endMs": 7220
+      },
+      {
+        "text": "you",
+        "startMs": 7220,
+        "endMs": 7360
+      },
+      {
+        "text": "on",
+        "startMs": 7360,
+        "endMs": 7520
+      },
+      {
+        "text": "the",
+        "startMs": 7520,
+        "endMs": 7640
+      },
+      {
+        "text": "quo",
+        "startMs": 7640,
+        "endMs": 7840
+      },
+      {
+        "text": "Shakespeare.",
+        "startMs": 7840,
+        "endMs": 8160
+      },
+      {
+        "text": "I",
+        "startMs": 8440,
+        "endMs": 8860
+      },
+      {
+        "text": "feel",
+        "startMs": 8860,
+        "endMs": 9060
+      },
+      {
+        "text": "I",
+        "startMs": 9060,
+        "endMs": 9280
+      },
+      {
+        "text": "feel",
+        "startMs": 9280,
+        "endMs": 9420
+      },
+      {
+        "text": "like",
+        "startMs": 9420,
+        "endMs": 9520
+      },
+      {
+        "text": "I",
+        "startMs": 9520,
+        "endMs": 9600
+      },
+      {
+        "text": "accomplished",
+        "startMs": 9600,
+        "endMs": 9840
+      },
+      {
+        "text": "something",
+        "startMs": 9840,
+        "endMs": 10120
+      },
+      {
+        "text": "today.",
+        "startMs": 10120,
+        "endMs": 10540
+      },
+      {
+        "text": "Shall",
+        "startMs": 10820,
+        "endMs": 11240
+      },
+      {
+        "text": "I",
+        "startMs": 11240,
+        "endMs": 11380
+      },
+      {
+        "text": "compare",
+        "startMs": 11380,
+        "endMs": 11540
+      },
+      {
+        "text": "me",
+        "startMs": 11540,
+        "endMs": 11720
+      },
+      {
+        "text": "to",
+        "startMs": 11720,
+        "endMs": 11840
+      },
+      {
+        "text": "a",
+        "startMs": 11840,
+        "endMs": 11960
+      },
+      {
+        "text": "summer",
+        "startMs": 11960,
+        "endMs": 12080
+      },
+      {
+        "text": "stay?",
+        "startMs": 12080,
+        "endMs": 12640
+      },
+      {
+        "text": "Clip",
+        "startMs": 14660,
+        "endMs": 15080
+      },
+      {
+        "text": "that",
+        "startMs": 15080,
+        "endMs": 15240
+      },
+      {
+        "text": "out",
+        "startMs": 15240,
+        "endMs": 15460
+      }
+    ],
+    "position": "bottom",
+    "style": {
+      "fontFamily": "editorial",
+      "fontSize": 68,
+      "animation": "kinetic-slam",
+      "fontColor": "#FFFFFF",
+      "highlightColor": "#FFD700",
+      "semanticColorMap": {
+        "simplify": "#FFD700",
+        "difficult": "#FFD700",
+        "first": "#FFD700",
+        "principles": "#FFD700",
+        "question": "#FFD700",
+        "requirements": "#FFD700"
+      },
+      "borderWidth": 8,
+      "borderColor": "#000000"
+    }
+  },
+  "hook": {
+    "text": "MUSK'S ENGINEERING RULE",
+    "position": "top",
+    "size": "S",
+    "entranceAnimation": "slide-up",
+    "displayDurationSec": 2.5,
+    "style": "dark"
+  },
+  "focusBadge": {
+    "enabled": true,
+    "text": "FIRST PRINCIPLES",
+    "category": "insight",
+    "accentColor": "#00FF88",
+    "position": "top-left",
+    "startMs": 2800,
+    "durationMs": 2500,
+    "variant": "badge"
+  },
+  "focusBadges": [
+    {
+      "enabled": true,
+      "text": "1. QUESTION\nREQUIREMENTS",
+      "category": "principle",
+      "accentColor": "#FFD700",
+      "position": "top-center",
+      "cardPosition": "center-left",
+      "startMs": 10500,
+      "durationMs": 1500,
+      "variant": "card"
+    }
+  ],
+  "effects": {
+    "segments": []
+  },
+  "progressBar": {
+    "enabled": true,
+    "position": "top",
+    "height": 5,
+    "color": "#FFD700",
+    "backgroundColor": "rgba(0,0,0,0.30)",
+    "glow": true
+  },
+  "emojis": null,
+  "colorGrading": {
+    "enabled": true,
+    "style": "teal-orange",
+    "hdrBloom": false,
+    "intensity": 0.4
+  },
+  "cameraMoves": [
+    {
+      "timestampStart": 2.5,
+      "duration": 2.5,
+      "scaleTarget": 1.12,
+      "easing": "spring"
+    },
+    {
+      "timestampStart": 10.5,
+      "duration": 2.0,
+      "scaleTarget": 1.08,
+      "easing": "spring"
+    }
+  ]
+}
