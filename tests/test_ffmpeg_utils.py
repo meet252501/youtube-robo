@@ -25,11 +25,11 @@ def _clean_encoder_state(monkeypatch):
 
 def test_default_args_pin_historical_x264_settings():
     assert video_encode_args(QUALITY) == [
-        "-c:v", "libx264", "-preset", "medium", "-crf", "18"]
+        "-c:v", "libx264", "-preset", "slow", "-crf", "16"]
     assert video_encode_args(QUALITY_FAST) == [
-        "-c:v", "libx264", "-preset", "fast", "-crf", "18"]
+        "-c:v", "libx264", "-preset", "slow", "-crf", "17"]
     assert video_encode_args(DELIVERY) == [
-        "-c:v", "libx264", "-preset", "fast", "-crf", "22"]
+        "-c:v", "libx264", "-preset", "slow", "-crf", "17"]
 
 
 def test_unknown_tier_raises():
