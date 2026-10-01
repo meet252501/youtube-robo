@@ -85,7 +85,7 @@ class TestDeliverySize:
 
 def test_general_filtergraph_targets_output_geometry():
     graph = general_filtergraph(1080, 1920)
-    assert "gblur" in graph
+    assert "boxblur" in graph
     assert "overlay=x=(W-w)/2:y=(H-h)/2" in graph
 
 
