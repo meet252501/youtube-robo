@@ -1,250 +1,175 @@
 {
-  "videoUrl": "/video_7d0c407e-35ea-45e5-ba5f-e6dc34aedc82.mp4",
-  "durationInFrames": 472,
+  "videoUrl": "/video_f4181f67-0d51-4227-af58-0c0e1f4b7585.mp4",
+  "durationInFrames": 298,
   "fps": 30.0,
   "width": 1080,
   "height": 1920,
   "subtitles": {
     "captions": [
       {
-        "text": "I",
-        "startMs": 0,
-        "endMs": 360
+        "text": "You",
+        "startMs": 110,
+        "endMs": 590
       },
       {
-        "text": "think",
-        "startMs": 360,
-        "endMs": 440
-      },
-      {
-        "text": "Shakespeare",
-        "startMs": 440,
-        "endMs": 780
-      },
-      {
-        "text": "had",
-        "startMs": 780,
-        "endMs": 1180
-      },
-      {
-        "text": "a",
-        "startMs": 1180,
-        "endMs": 1320
-      },
-      {
-        "text": "thing",
-        "startMs": 1320,
-        "endMs": 1500
-      },
-      {
-        "text": "about",
-        "startMs": 1500,
-        "endMs": 1720
-      },
-      {
-        "text": "roses",
-        "startMs": 1720,
-        "endMs": 2020
-      },
-      {
-        "text": "and",
-        "startMs": 2020,
-        "endMs": 2260
-      },
-      {
-        "text": "stuff",
-        "startMs": 2260,
-        "endMs": 2460
-      },
-      {
-        "text": "whatever",
-        "startMs": 2460,
-        "endMs": 2760
-      },
-      {
-        "text": "he",
-        "startMs": 2760,
-        "endMs": 2960
-      },
-      {
-        "text": "said",
-        "startMs": 2960,
-        "endMs": 3140
-      },
-      {
-        "text": "rose",
-        "startMs": 3140,
-        "endMs": 3600
-      },
-      {
-        "text": "by",
-        "startMs": 3600,
-        "endMs": 3820
-      },
-      {
-        "text": "any",
-        "startMs": 3820,
-        "endMs": 3940
-      },
-      {
-        "text": "other",
-        "startMs": 3940,
-        "endMs": 4040
-      },
-      {
-        "text": "name.",
-        "startMs": 4040,
-        "endMs": 4280
-      },
-      {
-        "text": "It's",
-        "startMs": 4520,
-        "endMs": 4940
-      },
-      {
-        "text": "all",
-        "startMs": 4940,
-        "endMs": 5020
-      },
-      {
-        "text": "sweet",
-        "startMs": 5020,
-        "endMs": 5320
+        "text": "know",
+        "startMs": 590,
+        "endMs": 630
       },
       {
         "text": "I",
-        "startMs": 6380,
-        "endMs": 6800
+        "startMs": 630,
+        "endMs": 710
       },
       {
-        "text": "got",
-        "startMs": 6800,
-        "endMs": 7220
+        "text": "have",
+        "startMs": 710,
+        "endMs": 730
       },
       {
-        "text": "you",
-        "startMs": 7220,
-        "endMs": 7360
+        "text": "this",
+        "startMs": 730,
+        "endMs": 810
       },
       {
-        "text": "on",
-        "startMs": 7360,
-        "endMs": 7520
+        "text": "very",
+        "startMs": 810,
+        "endMs": 1030
       },
       {
-        "text": "the",
-        "startMs": 7520,
-        "endMs": 7640
+        "text": "basic",
+        "startMs": 1030,
+        "endMs": 1770
       },
       {
-        "text": "quo",
-        "startMs": 7640,
-        "endMs": 7840
+        "text": "first",
+        "startMs": 1770,
+        "endMs": 2070
       },
       {
-        "text": "Shakespeare.",
-        "startMs": 7840,
-        "endMs": 8160
+        "text": "basic",
+        "startMs": 2070,
+        "endMs": 2650
       },
       {
-        "text": "I",
-        "startMs": 8440,
-        "endMs": 8860
+        "text": "first",
+        "startMs": 2650,
+        "endMs": 3050
       },
       {
-        "text": "feel",
-        "startMs": 8860,
-        "endMs": 9060
+        "text": "principles",
+        "startMs": 3050,
+        "endMs": 3350
       },
       {
-        "text": "I",
-        "startMs": 9060,
-        "endMs": 9280
-      },
-      {
-        "text": "feel",
-        "startMs": 9280,
-        "endMs": 9420
-      },
-      {
-        "text": "like",
-        "startMs": 9420,
-        "endMs": 9520
-      },
-      {
-        "text": "I",
-        "startMs": 9520,
-        "endMs": 9600
-      },
-      {
-        "text": "accomplished",
-        "startMs": 9600,
-        "endMs": 9840
-      },
-      {
-        "text": "something",
-        "startMs": 9840,
-        "endMs": 10120
-      },
-      {
-        "text": "today.",
-        "startMs": 10120,
-        "endMs": 10540
-      },
-      {
-        "text": "Shall",
-        "startMs": 10820,
-        "endMs": 11240
-      },
-      {
-        "text": "I",
-        "startMs": 11240,
-        "endMs": 11380
-      },
-      {
-        "text": "compare",
-        "startMs": 11380,
-        "endMs": 11540
-      },
-      {
-        "text": "me",
-        "startMs": 11540,
-        "endMs": 11720
-      },
-      {
-        "text": "to",
-        "startMs": 11720,
-        "endMs": 11840
-      },
-      {
-        "text": "a",
-        "startMs": 11840,
-        "endMs": 11960
-      },
-      {
-        "text": "summer",
-        "startMs": 11960,
-        "endMs": 12080
-      },
-      {
-        "text": "stay?",
-        "startMs": 12080,
-        "endMs": 12640
-      },
-      {
-        "text": "Clip",
-        "startMs": 14660,
-        "endMs": 15080
+        "text": "algorithm",
+        "startMs": 3350,
+        "endMs": 3630
       },
       {
         "text": "that",
-        "startMs": 15080,
-        "endMs": 15240
+        "startMs": 3630,
+        "endMs": 4150
       },
       {
-        "text": "out",
-        "startMs": 15240,
-        "endMs": 15460
+        "text": "I",
+        "startMs": 4150,
+        "endMs": 4290
+      },
+      {
+        "text": "run",
+        "startMs": 4290,
+        "endMs": 4670
+      },
+      {
+        "text": "kind",
+        "startMs": 4670,
+        "endMs": 4890
+      },
+      {
+        "text": "of",
+        "startMs": 4890,
+        "endMs": 4970
+      },
+      {
+        "text": "as",
+        "startMs": 4970,
+        "endMs": 5070
+      },
+      {
+        "text": "like",
+        "startMs": 5070,
+        "endMs": 5210
+      },
+      {
+        "text": "a",
+        "startMs": 5210,
+        "endMs": 5250
+      },
+      {
+        "text": "mantra",
+        "startMs": 5250,
+        "endMs": 5510
+      },
+      {
+        "text": "Which",
+        "startMs": 5510,
+        "endMs": 6170
+      },
+      {
+        "text": "is",
+        "startMs": 6170,
+        "endMs": 6330
+      },
+      {
+        "text": "the",
+        "startMs": 6330,
+        "endMs": 6550
+      },
+      {
+        "text": "first",
+        "startMs": 6550,
+        "endMs": 6910
+      },
+      {
+        "text": "question",
+        "startMs": 6910,
+        "endMs": 7250
+      },
+      {
+        "text": "the",
+        "startMs": 7250,
+        "endMs": 7390
+      },
+      {
+        "text": "requirements",
+        "startMs": 7390,
+        "endMs": 7830
+      },
+      {
+        "text": "make",
+        "startMs": 7830,
+        "endMs": 8109
+      },
+      {
+        "text": "the",
+        "startMs": 8109,
+        "endMs": 8230
+      },
+      {
+        "text": "requirements",
+        "startMs": 8230,
+        "endMs": 8490
+      },
+      {
+        "text": "less",
+        "startMs": 8490,
+        "endMs": 9330
+      },
+      {
+        "text": "dumb",
+        "startMs": 9330,
+        "endMs": 9650
       }
     ],
     "position": "bottom",
@@ -255,6 +180,7 @@
       "fontColor": "#FFFFFF",
       "highlightColor": "#FFD700",
       "semanticColorMap": {
+        "algorithm": "#00F0FF",
         "simplify": "#FFD700",
         "difficult": "#FFD700",
         "first": "#FFD700",

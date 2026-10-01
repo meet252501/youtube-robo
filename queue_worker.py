@@ -96,6 +96,7 @@ def process_pending_render_tasks():
             trim_cmd = [
                 "ffmpeg", "-y", "-i", proj['source_video_path'],
                 "-ss", str(clip['start_time']), "-to", str(clip['end_time']),
+                "-vf", "hqdn3d=4.0:4.0:3.0:3.0",
                 "-c:v", "libx264", "-preset", "slow", "-crf", "10", "-c:a", "aac", trimmed_source
             ]
             subprocess.run(trim_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
@@ -184,11 +185,14 @@ def process_pending_render_tasks():
                 "remotion", "render", "ShortVideo",
                 "../" + raw_remotion_file,
                 "--props=props.json",
-                "--concurrency=1"
+                "--concurrency=1",
+                "--crf=12",
+                "--jpeg-quality=100"
             ]
             subprocess.run(cmd, cwd="remotion", check=True)
             
-            final_output = f"output/final_{task['id']}.mp4"
+            base_name = os.path.splitext(os.path.basename(proj['source_video_path']))[0]
+            final_output = f"output/{base_name}_clip_{int(clip['start_time'])}s_to_{int(clip['end_time'])}s_{task['id'][:4]}.mp4"
             # Loudnorm
             pass1_cmd = ["ffmpeg", "-y", "-i", raw_remotion_file, "-af", "loudnorm=I=-14:TP=-1.0:LRA=7:print_format=json", "-f", "null", "-"]
             res = subprocess.run(pass1_cmd, capture_output=True, text=True)
